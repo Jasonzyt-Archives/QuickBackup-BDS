@@ -153,6 +153,7 @@
     <ClCompile Include="Function.cpp" />
     <ClCompile Include="getConfig.cpp" />
     <ClCompile Include="QuickBackup.cpp" />
+    <ClCompile Include="结构体.cpp" />
     <ClCompile Include="预编译头.cpp" />
   </ItemGroup>
   <ItemGroup>

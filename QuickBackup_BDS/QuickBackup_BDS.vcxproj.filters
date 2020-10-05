@@ -27,6 +27,9 @@
     <ClCompile Include="预编译头.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="结构体.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Detours\include\detours.h">
