@@ -1,5 +1,5 @@
 #include "预编译头.h"
-#pragma comment(lib, "urlmon.lib")
+#pragma comment(lib,"URlmon")
 
 using namespace std;
 
@@ -7,6 +7,7 @@ using namespace std;
 string opp, opfn;
 static VA p_spscqueue;
 ofstream logfile;
+bool v8, v9, v10, v11;
 
 /*** 定义值 ***/
 //备份TargetPath
@@ -125,89 +126,163 @@ bool sendText(string playername, string text)
 void init() 
 {
 	PR(0, u8"QuickBackup Loaded");
-	bool v1 = findFile("QuickBackup/config.ini");
+	int sb = GetSystemBits(); //sb = SystemBits
+	bool v1 = findFile("QuickBackup\\config.ini");
 	bool v6 = FolderExists(L"QuickBackup");
-	if (v1 == false && v6 == false)
+	bool v7 = findFile("QuickBackup\\Bandzip\\bz.exe");
+	if (sb == 64)
 	{
-		PR(0, "初次启动插件,开始创建相关文件(夹),如果创建失败请检查用户权限,建议使用管理员启动BDS");
-		mkdir("QuickBackup");
+		v8 = findFile("QuickBackup\\Bandzip\\ark.x64.dll");
+		v9 = findFile("QuickBackup\\Bandzip\\ark.x64.lgpl.dll");
+	}
+	else if (sb == 32)
+	{
+		v10 = findFile("QuickBackup\\Bandzip\\ark.x86.dll");
+		v11 = findFile("QuickBackup\\Bandzip\\ark.x86.lgpl.dll");
+	}
+	if (v1 == false)
+	{
+		PR(0, u8"初次启动插件,开始创建相关文件(夹),如果创建失败请检查用户权限,建议使用管理员启动BDS");
+		if (FolderExists(L"QuickBackup") == false)
+		{
+			mkdir("QuickBackup");
+			mkdir("QuickBackup\\Bandzip");
+		}
+		else if (FolderExists(L"QucikBackup\\Bandzip") == false)
+		{
+			mkdir("QuickBackup\\Bandzip");
+		}
 		bool v2 = FolderExists(L"QuickBackup");
 		if (v2 == false)
 		{
-			PR(2, "无法创建文件夹");
-			PR(2, "无法创建文件夹");
-			PR(2, "无法创建文件夹");
+			PR(2, u8"无法创建文件夹");
+			PR(2, u8"无法创建文件夹");
+			PR(2, u8"无法创建文件夹");
 		}
 		bool v3 = DownloadFile(L"http://download.skytown.xyz:15434/Filedir/QuickBackup/config.ini", L".\\QuickBackup\\config.ini");
-		if (v3)
+		bool a1 = DownloadFile(L"http://download.skytown.xyz:15434/Filedir/QuickBackup/bz.exe", L".\\QuickBackup\\Bandzip\\bz.exe");
+		if (sb == 64)
 		{
-			PR(0, "config.ini下载成功 请前往QuickBackup文件夹修改");
+			DownloadFile(L"http://download.skytown.xyz:15434/Filedir/QuickBackup/ark.x64.dll", L".\\QuickBackup\\Bandzip\\ark.x64.dll");
+			DownloadFile(L"http://download.skytown.xyz:15434/Filedir/QuickBackup/ark.x64.lgpl.dll", L".\\QuickBackup\\Bandzip\\ark.x64.lgpl.dll");
+		}
+		else if (sb == 32)
+		{
+			DownloadFile(L"http://download.skytown.xyz:15434/Filedir/QuickBackup/ark.x86.dll", L".\\QuickBackup\\Bandzip\\ark.x86.dll");
+			DownloadFile(L"http://download.skytown.xyz:15434/Filedir/QuickBackup/ark.x86.lgpl.dll", L".\\QuickBackup\\Bandzip\\ark.x86.lgpl.dll");
+		}
+		if (v3 && a1)
+		{
+			PR(0, u8"相关文件下载成功 请前往QuickBackup文件夹修改");
 		}
 		else
 		{
-			PR(2, "config.ini下载失败 正在重试");
+			PR(2, u8"相关文件下载失败 正在重试");
 			bool v4 = DownloadFile(L"http://download.skytown.xyz:15434/Filedir/QuickBackup/config.ini", L".\\QuickBackup\\config.ini");
-			if (v4)
+			bool a2 = DownloadFile(L"http://download.skytown.xyz:15434/Filedir/QuickBackup/bz.exe", L".\\QuickBackup\\Bandzip\\bz.exe");
+			if (sb == 64)
 			{
-				PR(0, "config.ini下载成功 请前往QuickBackup文件夹修改");
+				DownloadFile(L"http://download.skytown.xyz:15434/Filedir/QuickBackup/ark.x64.dll", L".\\QuickBackup\\Bandzip\\ark.x64.dll");
+				DownloadFile(L"http://download.skytown.xyz:15434/Filedir/QuickBackup/ark.x64.lgpl.dll", L".\\QuickBackup\\Bandzip\\ark.x64.lgpl.dll");
+			}
+			else if (sb == 32)
+			{
+				DownloadFile(L"http://download.skytown.xyz:15434/Filedir/QuickBackup/ark.x86.dll", L".\\QuickBackup\\Bandzip\\ark.x86.dll");
+				DownloadFile(L"http://download.skytown.xyz:15434/Filedir/QuickBackup/ark.x86.lgpl.dll", L".\\QuickBackup\\Bandzip\\ark.x86.lgpl.dll");
+			}
+			if (v4 && a2)
+			{
+				PR(0, u8"相关文件下载成功 请前往QuickBackup文件夹修改");
 			}
 			else
 			{
-				PR(2, "config.ini下载失败 正在重试");
+				PR(2, u8"相关文件下载失败 正在重试");
 				bool v5 = DownloadFile(L"http://download.skytown.xyz:15434/Filedir/QuickBackup/config.ini", L".\\QuickBackup\\config.ini");
-				if (v5)
+				bool a3 = DownloadFile(L"http://download.skytown.xyz:15434/Filedir/QuickBackup/bz.exe", L".\\QuickBackup\\Bandzip\\bz.exe");
+				if (sb == 64)
 				{
-					PR(0, "config.ini下载成功 请前往QuickBackup文件夹修改");
+					DownloadFile(L"http://download.skytown.xyz:15434/Filedir/QuickBackup/ark.x64.dll", L".\\QuickBackup\\Bandzip\\ark.x64.dll");
+					DownloadFile(L"http://download.skytown.xyz:15434/Filedir/QuickBackup/ark.x64.lgpl.dll", L".\\QuickBackup\\Bandzip\\ark.x64.lgpl.dll");
+				}
+				else if (sb == 32)
+				{
+					DownloadFile(L"http://download.skytown.xyz:15434/Filedir/QuickBackup/ark.x86.dll", L".\\QuickBackup\\Bandzip\\ark.x86.dll");
+					DownloadFile(L"http://download.skytown.xyz:15434/Filedir/QuickBackup/ark.x86.lgpl.dll", L".\\QuickBackup\\Bandzip\\ark.x86.lgpl.dll");
+				}
+				if (v5 && a3)
+				{
+					PR(0, u8"相关文件下载成功 请前往QuickBackup文件夹修改");
 				}
 				else
 				{
-					PR(2, "config.ini下载失败 请检查网络连接或手动从GitHub下载");
-					PR(2, "正在以默认配置启动...");
+					PR(2, u8"相关文件下载失败 请检查网络连接或手动从GitHub下载");
+					PR(2, u8"正在以默认配置启动...");
 				}
 			}
 		}
 	}
-	else if (v1 == false && v6 == false)
+	else
 	{
-		PR(2, "找不到配置文件,开始试图获取相关文件");
-		bool v3 = DownloadFile(L"http://download.skytown.xyz:15434/Filedir/QuickBackup/config.ini", L".\\QuickBackup\\config.ini");
-		if (v3)
+		//bz.exe
+		if (v7 == false)
 		{
-			PR(0, "config.ini下载成功 请前往QuickBackup文件夹修改");
-		}
-		else
-		{
-			PR(2, "config.ini下载失败 正在重试");
-			bool v4 = DownloadFile(L"http://download.skytown.xyz:15434/Filedir/QuickBackup/config.ini", L".\\QuickBackup\\config.ini");
-			if (v4)
-			{
-				PR(0, "config.ini下载成功 请前往QuickBackup文件夹修改");
-			}
+			PR(2, u8"缺少bz.exe,开始试图获取相关文件");
+			bool b1 = DownloadFile(L"http://download.skytown.xyz:15434/Filedir/QuickBackup/bz.exe", L".\\QuickBackup\\Bandzip\\bz.exe");
+			if (b1)
+				PR(0, u8"bz.exe下载成功");
 			else
-			{
-				PR(2, "config.ini下载失败 正在重试");
-				bool v5 = DownloadFile(L"http://download.skytown.xyz:15434/Filedir/QuickBackup/config.ini", L".\\QuickBackup\\config.ini");
-				if (v5)
-				{
-					PR(0, "config.ini下载成功 请前往QuickBackup文件夹修改");
-				}
-				else
-				{
-					PR(2, "config.ini下载失败 请检查网络连接或手动从GitHub下载");
-					PR(2, "正在以默认配置启动...");
-				}
-			}
+				PR(2, u8"bz.exe下载失败 请自行补全");
+		}
+		//ark.x64.dll
+		if (v8 == false && sb == 64)
+		{
+			PR(2, u8"缺少ark.x64.dll,开始试图获取相关文件");
+			bool b2 = DownloadFile(L"http://download.skytown.xyz:15434/Filedir/QuickBackup/ark.x64.dll", L".\\QuickBackup\\Bandzip\\ark.x64.dll");
+			if (b2)
+				PR(0, u8"ark.x64.dll下载成功");
+			else
+				PR(2, u8"ark.x64.dll下载失败 请自行补全");
+		}
+		//ark.x64.lgpl.dll
+		if (v9 == false && sb == 64)
+		{
+			PR(2, u8"缺少ark.x64.lgpl.dll,开始试图获取相关文件");
+			bool b2 = DownloadFile(L"http://download.skytown.xyz:15434/Filedir/QuickBackup/ark.x64.lgpl.dll", L".\\QuickBackup\\Bandzip\\ark.x64.lgpl.dll");
+			if (b2)
+				PR(0, u8"ark.x64.lgpl.dll下载成功");
+			else
+				PR(2, u8"ark.x64.lgpl.dll下载失败 请自行补全");
+		}
+		//ark.x86.dll
+		if (v10 == false && sb == 32)
+		{
+			PR(2, u8"缺少ark.x86.dll,开始试图获取相关文件");
+			bool b3 = DownloadFile(L"http://download.skytown.xyz:15434/Filedir/QuickBackup/ark.x86.dll", L".\\QuickBackup\\Bandzip\\ark.x86.dll");
+			if (b3)
+				PR(0, u8"ark.x86.dll下载成功");
+			else
+				PR(2, u8"ark.x86.dll下载失败 请自行补全");
+		}
+		//ark.x64.lgpl.dll
+		if (v11 == false && sb == 32)
+		{
+			PR(2, "缺少ark.x86.lgpl.dll,开始试图获取相关文件");
+			bool b4 = DownloadFile(L"http://download.skytown.xyz:15434/Filedir/QuickBackup/ark.x86.lgpl.dll", L".\\QuickBackup\\Bandzip\\ark.x86.lgpl.dll");
+			if (b4)
+				PR(0, u8"ark.x86.lgpl.dll下载成功");
+			else
+				PR(2, u8"ark.x86.lgpl.dll下载失败 请自行补全");
 		}
 	}
 	opp = getConfig("QuickBackup\\config.ini", "OutputPath", "backup\\");
 	opfn = getConfig("QuickBackup\\config.ini", "OutputFilname", "%Y-%m-%d-%H.zip");
 	logfile.open("QuickBackup\\qb.log", ios::out | ios::app);
-	PR(0, "插件已启动(Version 1.0.6)(GitHub Repository:https://www.github.com/Jasonzyt/QuickBackup-BDS)");
+	PR(0, u8"插件已启动(Version 1.2.4)(GitHub Repository:https://www.github.com/Jasonzyt/QuickBackup-BDS)");
 }
 //插件退出->预编译头.cpp
 void exit()
 {
-	PR(0, "插件已退出");
+	PR(0, u8"插件已退出");
 }
 //配置读取
 bool ReloadConfig()
@@ -220,18 +295,18 @@ bool ReloadConfig()
 bool RunBackup() 
 {
 	string _opfn = editZIPFilename(opfn);
-	PR(0, "Starting Backup. 开始备份");
-	PR(0, "Starting Compress. 开始压缩");
+	PR(0, u8"Starting Backup. 开始备份");
+	PR(0, u8"Starting Compress. 开始压缩");
 	system((getCmdStr(opp, tp, _opfn)).c_str());
 	bool v1 = findFile(opp + _opfn);
 	if (v1)
 	{
-		PR(0, "Backup Successful. 备份成功");
+		PR(0, u8"Backup Successful. 备份成功");
 		return true;
 	}
 	else
 	{
-		PR(0, "Backup Fail. 备份失败");
+		PR(0, u8"Backup Fail. 备份失败");
 		return false;
 	}	
 }
@@ -258,18 +333,26 @@ THook(void, MSSYM_B1QA6handleB1AE20ServerNetworkHandlerB2AAE26UEAAXAEBVNetworkId
 	string uid = pPlayer->getXuid(pxuid_level);
 	auto cmd = crp->toString();
 	auto pr = pPlayer->getDimensionId();
-	if (cmd == "/qb_backup") {
+	if (cmd == "/qb_backup") 
+	{
 		bool v1 = RunBackup();
 		if (v1)
 		{
-			sendText(uid, "[QuickBackup]备份成功");
+			sendText(uid, u8"[QuickBackup]备份成功");
+		}
+		else
+		{
+			sendText(uid, u8"[QuickBackup]备份失败,请前往控制台检查问题");
 		}
 		return;
 	}
+	if (cmd == "/qb_reload")
+	{
+		bool v2 = ReloadConfig();
+		if (v2)
+		{
+			sendText(uid, u8"[QuickBackup]重载成功");
+		}
+	}
 	original(_this, id, crp);
-}
-
-int main()
-{
-
 }

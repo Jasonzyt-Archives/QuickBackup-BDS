@@ -1,4 +1,5 @@
 #include "‘§±‡“ÎÕ∑.h"
+#pragma comment(lib,"URlmon")
 #pragma warning(disable:4996)
 
 using namespace std;
@@ -110,10 +111,15 @@ bool mkdir(string dirname)
     return true;
 }
 
-bool DownloadFile(const wchar_t* url, const wchar_t* downloadPath)
+bool DownloadFile(LPCWSTR url, LPCWSTR downloadPath)
 {
-    if (URLDownloadToFile(NULL, url, downloadPath, 0, 0) == S_OK && FolderExists(downloadPath)) return true;
-    else return false;
+    HRESULT Result = URLDownloadToFile(NULL, url, downloadPath , NULL, NULL);
+    switch (Result)
+    {
+    case S_OK:return true; break;
+    case E_OUTOFMEMORY: printf("The buffer length is invalid, or there is insufficient memory to complete the operation.\n"); break;
+    default:return false;
+    }
 }
 
 bool FolderExists(const wchar_t* path)
@@ -121,4 +127,30 @@ bool FolderExists(const wchar_t* path)
     DWORD dwAttribute = GetFileAttributes(path);
     if (dwAttribute == 0XFFFFFFFF) return false; 
     else return true;
+}
+
+VOID SafeGetNativeSystemInfo(__out LPSYSTEM_INFO lpSystemInfo)
+{
+    if (NULL == lpSystemInfo)	return;
+    typedef VOID(WINAPI* LPFN_GetNativeSystemInfo)(LPSYSTEM_INFO lpSystemInfo);
+    LPFN_GetNativeSystemInfo fnGetNativeSystemInfo = (LPFN_GetNativeSystemInfo)GetProcAddress(GetModuleHandle(_T("kernel32")), "GetNativeSystemInfo");;
+    if (NULL != fnGetNativeSystemInfo)
+    {
+        fnGetNativeSystemInfo(lpSystemInfo);
+    }
+    else
+    {
+        GetSystemInfo(lpSystemInfo);
+    }
+}
+
+int GetSystemBits()
+{
+    SYSTEM_INFO si;
+    SafeGetNativeSystemInfo(&si);
+    if (si.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64 || si.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_IA64)
+    {
+        return 64;
+    }
+    return 32;
 }

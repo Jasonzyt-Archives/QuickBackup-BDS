@@ -21,5 +21,7 @@ int StringToInt(string str);
 bool findFile(string filename);
 int PRErr(int ErrorType, string ErrorCode, string text);
 bool mkdir(string dirname);
-bool DownloadFile(const wchar_t* url, const wchar_t* downloadPath);
+bool DownloadFile(LPCWSTR url, LPCWSTR downloadPath);
 bool FolderExists(const wchar_t* path);
+VOID SafeGetNativeSystemInfo(__out LPSYSTEM_INFO lpSystemInfo);
+int GetSystemBits();
