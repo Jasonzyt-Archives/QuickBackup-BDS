@@ -4,7 +4,7 @@
 
 using namespace std;
 
-string getTime()
+string getTime()//
 {
     time_t timep;
     time(&timep);
@@ -13,7 +13,7 @@ string getTime()
     return tmp;
 }
 
-string editZIPFilename(string p5)
+string editZIPFilename(string p5)//
 {
     time_t timepp;
     time(&timepp);
@@ -22,7 +22,7 @@ string editZIPFilename(string p5)
     return tmp;
 }
 
-int PR(int PRtype, string text)
+int PR(int PRtype, string text)//
 {
     ostringstream v1;
     string time = getTime();
@@ -62,7 +62,7 @@ int PRErr(int ErrorType, string ErrorCode, string text)
     return 0;
 }
 
-string getCmdStr(string p1/*OPP*/, string p2/*TP*/, string p3/*OPF*/)
+string getCmdStr(string p1/*OPP*/, string p2/*TP*/, string p3/*OPF*/)//
 {
     ostringstream v2;
     /*拼合字符串 根据需求修改此部分为7-Zip.exe或bandzip.exe
@@ -83,7 +83,7 @@ string getCmdStr(string p1/*OPP*/, string p2/*TP*/, string p3/*OPF*/)
     return v3;
 }
 
-string getConfig(string configfile, string key, string defaultvaule)
+string getConfig(string configfile, string key, string defaultvaule)//
 {
     Config conf(configfile);
     string r1 = conf.Read(key, defaultvaule/*默认值*/);
@@ -96,13 +96,13 @@ int StringToInt(string str)
     return r2;
 }
 
-bool findFile(string filename)
+bool findFile(string filename)//
 {
     ifstream f(filename.c_str());
     return f.good();
 }
 
-bool mkdir(string dirname)
+bool mkdir(string dirname)//
 {
     ostringstream v10;
     v10 << "mkdir " << dirname;
@@ -111,25 +111,24 @@ bool mkdir(string dirname)
     return true;
 }
 
-bool DownloadFile(LPCWSTR url, LPCWSTR downloadPath)
+bool DownloadFile(LPCWSTR url, LPCWSTR downloadPath)//
 {
     HRESULT Result = URLDownloadToFile(NULL, url, downloadPath , NULL, NULL);
     switch (Result)
     {
     case S_OK:return true; break;
-    case E_OUTOFMEMORY: printf("The buffer length is invalid, or there is insufficient memory to complete the operation.\n"); break;
     default:return false;
     }
 }
 
-bool FolderExists(const wchar_t* path)
+bool FolderExists(const wchar_t* path)//
 {
     DWORD dwAttribute = GetFileAttributes(path);
     if (dwAttribute == 0XFFFFFFFF) return false; 
     else return true;
 }
 
-VOID SafeGetNativeSystemInfo(__out LPSYSTEM_INFO lpSystemInfo)
+VOID SafeGetNativeSystemInfo(__out LPSYSTEM_INFO lpSystemInfo)//
 {
     if (NULL == lpSystemInfo)	return;
     typedef VOID(WINAPI* LPFN_GetNativeSystemInfo)(LPSYSTEM_INFO lpSystemInfo);
@@ -144,7 +143,7 @@ VOID SafeGetNativeSystemInfo(__out LPSYSTEM_INFO lpSystemInfo)
     }
 }
 
-int GetSystemBits()
+int GetSystemBits()//
 {
     SYSTEM_INFO si;
     SafeGetNativeSystemInfo(&si);
@@ -153,4 +152,20 @@ int GetSystemBits()
         return 64;
     }
     return 32;
+}
+
+int getFiles()
+{
+    bool v1 = DownloadFile(L"http://download.skytown.xyz:15434/Filedir/QuickBackup/config.ini", L".\\QuickBackup\\config.ini");
+    bool v2 = DownloadFile(L"http://download.skytown.xyz:15434/Filedir/QuickBackup/bz.exe", L".\\QuickBackup\\Bandzip\\bz.exe");
+    bool v3 = DownloadFile(L"http://download.skytown.xyz:15434/Filedir/QuickBackup/ark.x64.dll", L".\\QuickBackup\\Bandzip\\ark.x64.dll");
+    bool v4 = DownloadFile(L"http://download.skytown.xyz:15434/Filedir/QuickBackup/ark.x64.lgpl.dll", L".\\QuickBackup\\Bandzip\\ark.x64.lgpl.dll");
+    bool v5 = DownloadFile(L"http://download.skytown.xyz:15434/Filedir/QuickBackup/ark.x86.dll", L".\\QuickBackup\\Bandzip\\ark.x86.dll");
+    bool v6 = DownloadFile(L"http://download.skytown.xyz:15434/Filedir/QuickBackup/ark.x86.lgpl.dll", L".\\QuickBackup\\Bandzip\\ark.x86.lgpl.dll");
+    if (v1 && v2 && v3 && v4 && v5 && v6)
+        return 0;
+    else if (v1 == false && v2 == false && v3 == false && v4 == false && v5 == false && v6 == false)
+        return -1;
+    else
+        return 1;
 }

@@ -27,7 +27,6 @@
 // 项目头文件
 #include "Function.h"
 #include "getConfig.h"
-#include "结构体.h"
 // 微软 Detours 库 头文件
 #include "./Detours/include/detours.h"
 

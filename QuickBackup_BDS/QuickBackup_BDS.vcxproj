@@ -146,18 +146,19 @@
     <ClInclude Include="getConfig.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="符号定位.hpp" />
-    <ClInclude Include="结构体.h" />
     <ClInclude Include="预编译头.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Function.cpp" />
     <ClCompile Include="getConfig.cpp" />
     <ClCompile Include="QuickBackup.cpp" />
-    <ClCompile Include="结构体.cpp" />
     <ClCompile Include="预编译头.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="QuickBackup_BDS.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="D:\Download\Filedir\QuickBackup\config.ini" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

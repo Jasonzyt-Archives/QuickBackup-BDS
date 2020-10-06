@@ -46,3 +46,12 @@ constexpr RVA MSSYM_MD5_40e8abf6eb08f7ee446159cdd0a7f283 = 0x0017A240;
 // [原型] public: __cdecl Player::Player(class Level & __ptr64,class PacketSender & __ptr64,enum GameType,class NetworkIdentifier const & __ptr64,unsigned char,class mce::UUID,class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > const & __ptr64,class std::unique_ptr<class Certificate,struct std::default_delete<class Certificate> >,class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > const & __ptr64,class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > const & __ptr64) __ptr64
 // [符号] ??0Player@@QEAA@AEAVLevel@@AEAVPacketSender@@W4GameType@@AEBVNetworkIdentifier@@EVUUID@mce@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@V?$unique_ptr@VCertificate@@U?$default_delete@VCertificate@@@std@@@8@55@Z
 constexpr RVA MSSYM_MD5_c4b0cddb50ed88e87acce18b5bd3fb8a = 0x006DC0F0;
+
+// [原型] public: enum DedicatedServer::StartResult __cdecl DedicatedServer::start(class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > const & __ptr64) __ptr64
+// [符号] ?start@DedicatedServer@@QEAA?AW4StartResult@1@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
+constexpr RVA MSSYM_MD5_47b0d441c8637d711dea1d116dd4c5b2 = 0x000A6F60;
+
+// [原型] class std::basic_ostream<char,struct std::char_traits<char> > & __ptr64 __cdecl std::_Insert_string<char,struct std::char_traits<char>,unsigned __int64>(class std::basic_ostream<char,struct std::char_traits<char> > & __ptr64,char const * __ptr64 const,unsigned __int64)
+// [符号] ??$_Insert_string@DU?$char_traits@D@std@@_K@std@@YAAEAV?$basic_ostream@DU?$char_traits@D@std@@@0@AEAV10@QEBD_K@Z
+constexpr RVA MSSYM_MD5_b5f2f0a753fc527db19ac8199ae8f740 = 0x000A2FA0;
+

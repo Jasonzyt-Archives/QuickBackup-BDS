@@ -11,7 +11,7 @@ Config::Config(string filename, string delimiter,string comment)
 
     if (!in) { 
         //throw File_not_found(filename);
-        PR(2,"Can't Find Config File\"config.ini\" 找不到文件\"config.ini\"");
+        PR(2,u8"Can't Find Config File\"config.ini\" 找不到文件\"config.ini\"");
     }
 
     in >> (*this);
