@@ -13,7 +13,7 @@ bool v8, v9, v10, v11;
 
 /*** 定义值 ***/
 //备份TargetPath
-string tp = ".\\world\\";
+string tp = ".\\worlds\\";
 
 /*** 结构体 ***/
 // 取命令文本
