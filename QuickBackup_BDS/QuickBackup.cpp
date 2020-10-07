@@ -6,7 +6,7 @@
 using namespace std;
 
 /*** 声明值 ***/
-string opp, opfn;
+string opp, opfn, _opfn;
 static VA p_spscqueue;
 ofstream logfile;
 bool v8, v9, v10, v11;
@@ -144,7 +144,7 @@ void init()
 	opp = getConfig("QuickBackup\\config.ini", "OutputPath", "backup\\");
 	opfn = getConfig("QuickBackup\\config.ini", "OutputFilname", "%Y-%m-%d-%H.zip");
 	logfile.open("QuickBackup\\qb.log", ios::out | ios::app);
-	PR(0, u8"插件已启动(Version 2.0.1)(GitHub Repository:https://www.github.com/Jasonzyt/QuickBackup-BDS)");
+	PR(0, u8"插件已启动(Version 2.0.5)(GitHub Repository:https://www.github.com/Jasonzyt/QuickBackup-BDS)");
 }
 //插件退出->预编译头.cpp
 void exit()
@@ -206,7 +206,7 @@ bool ReloadConfig()
 //运行备份
 bool RunBackup() 
 {
-	string _opfn = editZIPFilename(opfn);
+	_opfn = editZIPFilename(opfn);
 	PR(0, u8"Starting Backup. 开始备份");
 	PR(0, u8"Starting Compress. 开始压缩");
 	system((getCmdStr(opp, tp, _opfn)).c_str());
@@ -218,7 +218,8 @@ bool RunBackup()
 	}
 	else
 	{
-		PR(0, u8"Backup Fail. 备份失败");
+		PR(2, u8"Backup Fail. 备份失败");
+		logfile << "[" << getTime() << "] " << "控制台执行了一次备份(失败)" << endl;
 		return false;
 	}	
 }
@@ -231,7 +232,7 @@ THook(void, MSSYM_B1QA5setupB1AE20ChangeSettingCommandB2AAE22SAXAEAVCommandRegis
 	_this->registerCommand("qb_auto_on", u8"开启自动备份", 0, { 0 }, { 0x40 });
 	_this->registerCommand("qb_auto_off", u8"关闭自动备份", 0, { 0 }, { 0x40 });
 	_this->registerCommand("qb_back", u8"打开回档GUI", 0, { 0 }, { 0x40 });
-	_this->registerCommand("qb_fix", u8"检查问题并修复", 0, { 0 }, { 0x40 });
+	//_this->registerCommand("qb_fix", u8"检查问题并修复", 0, { 0 }, { 0x40 });
 	original(_this);
 }
 //GetXuid
@@ -250,10 +251,12 @@ THook(bool, MSSYM_MD5_b5c9e566146b3136e6fb37f0c080d91e,VA _this, std::string* cm
 		if (v1)
 		{
 			PR(0, u8"备份成功");
+			logfile << "[" << getTime() << "] " << "控制台执行了一次备份(成功) 备份文件在" << opp << _opfn << endl;
 		}
 		else
 		{
-			PR(2, u8"备份失败,请前往控制台检查问题");
+			PR(2, u8"备份失败,请发送qb_fix或qb_reload后重试");
+			logfile << "[" << getTime() << "] " << "控制台执行了一次备份(失败)" << endl;
 		}
 		return false;
 	}
@@ -263,6 +266,7 @@ THook(bool, MSSYM_MD5_b5c9e566146b3136e6fb37f0c080d91e,VA _this, std::string* cm
 		if (v2)
 		{
 			PR(0, u8"重载成功");
+			logfile << "[" << getTime() << "] " << " 控制台执行了一次重载(成功)" << endl;
 		}
 		return false;
 	}
@@ -272,10 +276,12 @@ THook(bool, MSSYM_MD5_b5c9e566146b3136e6fb37f0c080d91e,VA _this, std::string* cm
 		if (v3)
 		{
 			PR(0, u8"修复成功");
+			logfile << "[" << getTime() << "] " << " 控制台执行了一次修复(成功)" << endl;
 		}
 		else
 		{
 			PR(2, u8"修复失败 请重试或手动修复");
+			logfile << "[" << getTime() << "] " << " 控制台执行了一次修复(失败)" << endl;
 		}
 		return false;
 	}
@@ -286,6 +292,7 @@ THook(void, MSSYM_B1QA6handleB1AE20ServerNetworkHandlerB2AAE26UEAAXAEBVNetworkId
 {
 	Player* pPlayer = SYMCALL(Player*, MSSYM_B2QUE15getServerPlayerB1AE20ServerNetworkHandlerB2AAE20AEAAPEAVServerPlayerB2AAE21AEBVNetworkIdentifierB2AAA1EB1AA1Z,_this, id, *((char*)crp + 16));
 	string uid = pPlayer->getXuid(pxuid_level);
+	string playername = pPlayer->getNameTag();
 	auto cmd = crp->toString();
 	auto pr = pPlayer->getDimensionId();
 	if (cmd == "/qb_backup") 
@@ -293,11 +300,15 @@ THook(void, MSSYM_B1QA6handleB1AE20ServerNetworkHandlerB2AAE26UEAAXAEBVNetworkId
 		bool v1 = RunBackup();
 		if (v1)
 		{
-			sendText(uid, u8"[QuickBackup]备份成功");
+			sendText(playername, u8"[QuickBackup]备份成功");
+			cout << "[" << getTime() << "] " << "玩家 " << playername << " 执行了一次备份(成功) 备份文件在" << opp << _opfn << endl;
+			logfile << "[" << getTime() << "] " << "玩家 " << playername << " 执行了一次备份(成功) 备份文件在" << opp << _opfn << endl;
 		}
 		else
 		{
-			sendText(uid, u8"[QuickBackup]备份失败,请前往控制台检查问题");
+			sendText(playername, u8"[QuickBackup]备份失败,请使用/qb_reload后重试");
+			cout << "[" << getTime() << "] " << "玩家 " << playername << " 执行了一次备份(失败)" << endl;
+			logfile << "[" << getTime() << "] " << "玩家 " << playername << " 执行了一次备份(失败)" << endl;
 		}
 	}
 	if (cmd == "/qb_reload")
@@ -305,7 +316,9 @@ THook(void, MSSYM_B1QA6handleB1AE20ServerNetworkHandlerB2AAE26UEAAXAEBVNetworkId
 		bool v2 = ReloadConfig();
 		if (v2)
 		{
-			sendText(uid, u8"[QuickBackup]重载成功");
+			sendText(playername, u8"[QuickBackup]重载成功");
+			cout << "[" << getTime() << "] " << "玩家 " << playername << " 执行了一次重载(成功)" << endl;
+			logfile << "[" << getTime() << "] " << "玩家 " << playername << " 执行了一次重载(成功)" << endl;
 		}
 	}
 	original(_this, id, crp);
