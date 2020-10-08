@@ -78,7 +78,7 @@ string getCmdStr(string p1/*OPP*/, string p2/*TP*/, string p3/*OPF*/)//
     *7-Zip
         v2 << "[7-Zip Folder] a \"" << p1 << p3 << "\" " << "\"" << p2 << "\" -y -r";
     */
-    v2 << "bz.exe c -y -r -fmt:zip \"" << p1 << p3 << "\" " << "\"" << p2 << "\" ";
+    v2 << "QuickBackup\\Bandzip\\bz.exe c -y -r -fmt:zip \"" << p1 << p3 << "\" " << "\"" << p2 << "\" ";
     string v3 = v2.str();
     return v3;
 }
