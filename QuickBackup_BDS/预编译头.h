@@ -24,6 +24,7 @@
 #include <urlmon.h>
 #include <tchar.h>
 #include <direct.h>
+#include <thread>
 // 项目头文件
 #include "Function.h"
 #include "getConfig.h"

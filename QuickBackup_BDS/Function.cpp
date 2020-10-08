@@ -128,7 +128,8 @@ bool FolderExists(const wchar_t* path)//
     else return true;
 }
 
-VOID SafeGetNativeSystemInfo(__out LPSYSTEM_INFO lpSystemInfo)//
+/*
+VOID SafeGetNativeSystemInfo(__out LPSYSTEM_INFO lpSystemInfo)
 {
     if (NULL == lpSystemInfo)	return;
     typedef VOID(WINAPI* LPFN_GetNativeSystemInfo)(LPSYSTEM_INFO lpSystemInfo);
@@ -143,7 +144,7 @@ VOID SafeGetNativeSystemInfo(__out LPSYSTEM_INFO lpSystemInfo)//
     }
 }
 
-int GetSystemBits()//
+int GetSystemBits()
 {
     SYSTEM_INFO si;
     SafeGetNativeSystemInfo(&si);
@@ -153,6 +154,7 @@ int GetSystemBits()//
     }
     return 32;
 }
+*/
 
 int getFiles()
 {

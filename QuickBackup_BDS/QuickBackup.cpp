@@ -7,7 +7,7 @@ using namespace std;
 
 /*** 声明值 ***/
 string opp, opfn, _opfn;
-static VA p_spscqueue;
+static VA p_spscqueue, pxuid_level;
 ofstream logfile;
 bool v8, v9, v10, v11;
 
@@ -54,42 +54,18 @@ struct MCUUID {
 		return s;
 	}
 };
-// 玩家坐标结构体
-struct Vec3 {
-	float x;
-	float y;
-	float z;
-
-	std::string toJsonString() {
-		char str[256];
-		sprintf_s(str, "%d.%d.%d", (int)x, (int)y, (int)z);
-		return std::string(str);
-	}
-};
 struct Actor {
 	// 获取生物名称信息
 	std::string getNameTag() {
 		return SYMCALL(std::string&, MSSYM_MD5_7044ab83168b0fd345329e6566fd47fd, this);
 	}
-	// 获取生物当前所处维度ID
+	/* 获取生物当前所处维度ID
 	int getDimensionId() {
 		int dimensionId;
 		SYMCALL(int&, MSSYM_B1QE14getDimensionIdB1AA5ActorB2AAA4UEBAB1QA2AVB2QDE11AutomaticIDB1AE10VDimensionB2AAA1HB2AAA2XZ, this, &dimensionId);
 		return dimensionId;
 	}
-
-
-	// 获取生物当前所在坐标
-	Vec3* getPos() {
-		return SYMCALL(Vec3*, MSSYM_B1QA6getPosB1AA5ActorB2AAE12UEBAAEBVVec3B2AAA2XZ, this);
-	}
-
-	// 获取生物类型
-	std::string getTypeName() {
-		std::string actor_typename;
-		SYMCALL(std::string&, MSSYM_MD5_01064f7d893d9f9ef50acf1f931d1d79, &actor_typename, this);
-		return actor_typename;
-	}
+	*/
 };
 // 取uuid
 struct Player : Actor {
@@ -219,10 +195,18 @@ bool RunBackup()
 	else
 	{
 		PR(2, u8"Backup Fail. 备份失败");
-		logfile << "[" << getTime() << "] " << "控制台执行了一次备份(失败)" << endl;
 		return false;
 	}	
 }
+
+//bool AutoOn() 
+//{	}
+
+bool back(string filepath)
+{
+
+}
+
 /*** THook ***/
 //假命令注册->Line 7
 THook(void, MSSYM_B1QA5setupB1AE20ChangeSettingCommandB2AAE22SAXAEAVCommandRegistryB3AAAA1Z, CommandRegistry* _this) 
@@ -236,7 +220,6 @@ THook(void, MSSYM_B1QA5setupB1AE20ChangeSettingCommandB2AAE22SAXAEAVCommandRegis
 	original(_this);
 }
 //GetXuid
-static VA pxuid_level;
 THook(Player*, MSSYM_MD5_c4b0cddb50ed88e87acce18b5bd3fb8a,Player* _this, VA level, __int64 a3, int a4, __int64 a5, __int64 a6, void* xuid, std::string& strxuid, __int64* a9, __int64 a10, __int64 a11) {
 	pxuid_level = level;
 	return original(_this, level, a3, a4, a5, a6, xuid, strxuid, a9, a10, a11);
@@ -285,6 +268,12 @@ THook(bool, MSSYM_MD5_b5c9e566146b3136e6fb37f0c080d91e,VA _this, std::string* cm
 		}
 		return false;
 	}
+	if (cmdstr == "qb_auto_on")
+	{
+		//thread ab1(AutoOn);
+		//PR(0, u8"自动备份已开启");
+		return false;
+	}
 	original(_this, cmd);
 }
 //玩家命令处理
@@ -294,7 +283,6 @@ THook(void, MSSYM_B1QA6handleB1AE20ServerNetworkHandlerB2AAE26UEAAXAEBVNetworkId
 	string uid = pPlayer->getXuid(pxuid_level);
 	string playername = pPlayer->getNameTag();
 	auto cmd = crp->toString();
-	auto pr = pPlayer->getDimensionId();
 	if (cmd == "/qb_backup") 
 	{
 		bool v1 = RunBackup();

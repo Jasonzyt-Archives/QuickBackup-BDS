@@ -23,6 +23,6 @@ int PRErr(int ErrorType, string ErrorCode, string text);
 bool mkdir(string dirname);
 bool DownloadFile(LPCWSTR url, LPCWSTR downloadPath);
 bool FolderExists(const wchar_t* path);
-VOID SafeGetNativeSystemInfo(__out LPSYSTEM_INFO lpSystemInfo);
-int GetSystemBits();
+//VOID SafeGetNativeSystemInfo(__out LPSYSTEM_INFO lpSystemInfo);
+//int GetSystemBits();
 int getFiles();
