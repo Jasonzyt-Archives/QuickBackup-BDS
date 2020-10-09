@@ -15,7 +15,7 @@ bool v8, v9, v10, v11;
 bool fix();
 bool ReloadConfig();
 bool RunBackup();
-bool Back();
+bool Back(string filepath);
 
 /*** 定义值 ***/
 //备份TargetPath
@@ -127,8 +127,7 @@ void init()
 	}
 	else
 	{
-		thread Donload(fix);
-		Donload.join();
+		PR(0, u8"初次启动插件 请输入命令qb_fix下载相关文件");
 	}
 	PR(0, u8"开始读取配置");
 	opp = getConfig("QuickBackup\\config.ini", "OutputPath", "backup\\");
