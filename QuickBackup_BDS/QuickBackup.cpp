@@ -11,6 +11,12 @@ static VA p_spscqueue, pxuid_level;
 ofstream logfile;
 bool v8, v9, v10, v11;
 
+/*** 函数声明 ***/
+bool fix();
+bool ReloadConfig();
+bool RunBackup();
+bool Back();
+
 /*** 定义值 ***/
 //备份TargetPath
 string tp = ".\\worlds\\";
@@ -104,23 +110,31 @@ bool sendText(string playername, string text)
 void init() 
 {
 	PR(0, u8"QuickBackup Loaded");
-	if (findFile("QuickBackup\\config.ini") == false)
-		PR(2, u8"缺少config.ini文件 请发送命令qb_fix来修复此错误");
-	if (findFile("QuickBackup\\Bandzip\\bz.exe") == false)
-		PR(2, u8"缺少bz.exe文件 请发送命令qb_fix来修复此错误");
-	if (findFile("QuickBackup\\Bandzip\\ark.x64.dll") == false)
-		PR(2, u8"缺少ark.x64.dll文件 请发送命令qb_fix来修复此错误");
-	if (findFile("QuickBackup\\Bandzip\\ark.x86.dll") == false)
-		PR(2, u8"缺少ark.x86.dll文件 请发送命令qb_fix来修复此错误");	
-	if (findFile("QuickBackup\\Bandzip\\ark.x64.lgpl.dll") == false)
-		PR(2, u8"缺少ark.x64.lgpl.dll文件 请发送命令qb_fix来修复此错误");
-	if (findFile("QuickBackup\\Bandzip\\ark.x86.lgpl.dll") == false)
-		PR(2, u8"缺少ark.x86.lgpl.dll文件 请发送命令qb_fix来修复此错误");
+	if (FolderExists(L"QuickBackup"))
+	{
+		if (findFile("QuickBackup\\config.ini") == false)
+			PR(2, u8"缺少config.ini文件 请发送命令qb_fix来修复此错误");
+		if (findFile("QuickBackup\\Bandzip\\bz.exe") == false)
+			PR(2, u8"缺少bz.exe文件 请发送命令qb_fix来修复此错误");
+		if (findFile("QuickBackup\\Bandzip\\ark.x64.dll") == false)
+			PR(2, u8"缺少ark.x64.dll文件 请发送命令qb_fix来修复此错误");
+		if (findFile("QuickBackup\\Bandzip\\ark.x86.dll") == false)
+			PR(2, u8"缺少ark.x86.dll文件 请发送命令qb_fix来修复此错误");	
+		if (findFile("QuickBackup\\Bandzip\\ark.x64.lgpl.dll") == false)
+			PR(2, u8"缺少ark.x64.lgpl.dll文件 请发送命令qb_fix来修复此错误");
+		if (findFile("QuickBackup\\Bandzip\\ark.x86.lgpl.dll") == false)
+			PR(2, u8"缺少ark.x86.lgpl.dll文件 请发送命令qb_fix来修复此错误");
+	}
+	else
+	{
+		thread Donload(fix);
+		Donload.join();
+	}
 	PR(0, u8"开始读取配置");
 	opp = getConfig("QuickBackup\\config.ini", "OutputPath", "backup\\");
 	opfn = getConfig("QuickBackup\\config.ini", "OutputFilname", "%Y-%m-%d-%H.zip");
 	logfile.open("QuickBackup\\qb.log", ios::out | ios::app);
-	PR(0, u8"插件已启动(Version 2.0.5)(GitHub Repository:https://www.github.com/Jasonzyt/QuickBackup-BDS)");
+	PR(0, u8"插件已启动(Version 2.0.6)(GitHub Repository:https://www.github.com/Jasonzyt/QuickBackup-BDS)");
 }
 //插件退出->预编译头.cpp
 void exit()
