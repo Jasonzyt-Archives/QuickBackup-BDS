@@ -1,8 +1,8 @@
 # QuickBackup-BDS
 A QuickBackup Plugin Of Bedrock Dedicated Server
 
-### Plugin Commands
-#### Server Commands
+#### Plugin Commands
+##### Server Commands
 + qb_backup   
   Run once backup (NOT AutoBackup)
 + qb_reload   
@@ -17,8 +17,8 @@ A QuickBackup Plugin Of Bedrock Dedicated Server
   + [ark.x64.lgpl.dll](http://download.skytown.xyz:15434/Filedir/QuickBackup/ark.x64.lgpl.dll) 
   + [ark.x86.lgpl.dll](http://download.skytown.xyz:15434/Filedir/QuickBackup/ark.x86.lgpl.dll) 
 
-#### Client Commands
-+ qb_backup  
+##### Client Commands
++ /qb_backup  
   Run once backup (NOT AutoBackup)
-+ qb_reload  
++ /qb_reload  
   Reload config file

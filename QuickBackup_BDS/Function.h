@@ -13,6 +13,7 @@ using namespace std;
 //Variable Declaration
 //Function Declaration
 string getTime();
+string getMinute();
 string editZIPFilename(string outputfilename);
 int PR(int PRtype, string text);
 string getCmdStr(string p1, string p2, string p3);

@@ -130,6 +130,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -144,6 +145,17 @@
     <ClInclude Include="Detours\include\syelog.h" />
     <ClInclude Include="Function.h" />
     <ClInclude Include="getConfig.h" />
+    <ClInclude Include="json\allocator.h" />
+    <ClInclude Include="json\assertions.h" />
+    <ClInclude Include="json\config.h" />
+    <ClInclude Include="json\forwards.h" />
+    <ClInclude Include="json\json.h" />
+    <ClInclude Include="json\json_features.h" />
+    <ClInclude Include="json\json_tool.h" />
+    <ClInclude Include="json\reader.h" />
+    <ClInclude Include="json\value.h" />
+    <ClInclude Include="json\version.h" />
+    <ClInclude Include="json\writer.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="符号定位.hpp" />
     <ClInclude Include="预编译头.h" />
@@ -151,6 +163,9 @@
   <ItemGroup>
     <ClCompile Include="Function.cpp" />
     <ClCompile Include="getConfig.cpp" />
+    <ClCompile Include="json\json_reader.cpp" />
+    <ClCompile Include="json\json_value.cpp" />
+    <ClCompile Include="json\json_writer.cpp" />
     <ClCompile Include="QuickBackup.cpp" />
     <ClCompile Include="预编译头.cpp" />
   </ItemGroup>
@@ -158,21 +173,10 @@
     <ResourceCompile Include="QuickBackup_BDS.rc" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="D:\Download\Filedir\QuickBackup\config.ini" />
-  </ItemGroup>
-  <ItemGroup>
     <Text Include="Update.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="json\json_valueiterator.inl" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-    <Import Project="..\packages\pthreads.redist.2.9.1.4\build\native\pthreads.redist.targets" Condition="Exists('..\packages\pthreads.redist.2.9.1.4\build\native\pthreads.redist.targets')" />
-    <Import Project="..\packages\pthreads.2.9.1.4\build\native\pthreads.targets" Condition="Exists('..\packages\pthreads.2.9.1.4\build\native\pthreads.targets')" />
-  </ImportGroup>
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>这台计算机上缺少此项目引用的 NuGet 程序包。使用“NuGet 程序包还原”可下载这些程序包。有关更多信息，请参见 http://go.microsoft.com/fwlink/?LinkID=322105。缺少的文件是 {0}。</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\pthreads.redist.2.9.1.4\build\native\pthreads.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\pthreads.redist.2.9.1.4\build\native\pthreads.redist.targets'))" />
-    <Error Condition="!Exists('..\packages\pthreads.2.9.1.4\build\native\pthreads.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\pthreads.2.9.1.4\build\native\pthreads.targets'))" />
-  </Target>
 </Project>

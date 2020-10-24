@@ -25,9 +25,17 @@
 #include <tchar.h>
 #include <direct.h>
 #include <thread>
-// 项目头文件
+#include <cstring>
+// 项目 头文件
 #include "Function.h"
 #include "getConfig.h"
+// JsonCPP 库 头文件
+#include "json/forwards.h"
+#include "json/writer.h"
+#include "json/value.h"
+#include "json/json.h"
+#include "json/reader.h"
+#include <direct.h>
 // 微软 Detours 库 头文件
 #include "./Detours/include/detours.h"
 

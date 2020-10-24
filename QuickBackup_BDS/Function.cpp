@@ -4,12 +4,21 @@
 
 using namespace std;
 
-string getTime()//
+string getTime()
 {
     time_t timep;
     time(&timep);
     char tmp[64];
     strftime(tmp, sizeof(tmp), "%Y-%m-%d %H:%M:%S", localtime(&timep));
+    return tmp;
+}
+
+string getMinute()
+{
+    time_t timep;
+    time(&timep);
+    char tmp[64];
+    strftime(tmp, sizeof(tmp), "%Y-%m-%d-%H-%M", localtime(&timep));
     return tmp;
 }
 
@@ -96,13 +105,13 @@ int StringToInt(string str)
     return r2;
 }
 
-bool findFile(string filename)//
+bool findFile(string filename)
 {
     ifstream f(filename.c_str());
     return f.good();
 }
 
-bool mkdir(string dirname)//
+bool mkdir(string dirname)
 {
     ostringstream v10;
     v10 << "mkdir " << dirname;
@@ -111,7 +120,7 @@ bool mkdir(string dirname)//
     return true;
 }
 
-bool DownloadFile(LPCWSTR url, LPCWSTR downloadPath)//
+bool DownloadFile(LPCWSTR url, LPCWSTR downloadPath)
 {
     HRESULT Result = URLDownloadToFile(NULL, url, downloadPath , NULL, NULL);
     switch (Result)
@@ -128,41 +137,21 @@ bool FolderExists(const wchar_t* path)//
     else return true;
 }
 
-/*
-VOID SafeGetNativeSystemInfo(__out LPSYSTEM_INFO lpSystemInfo)
-{
-    if (NULL == lpSystemInfo)	return;
-    typedef VOID(WINAPI* LPFN_GetNativeSystemInfo)(LPSYSTEM_INFO lpSystemInfo);
-    LPFN_GetNativeSystemInfo fnGetNativeSystemInfo = (LPFN_GetNativeSystemInfo)GetProcAddress(GetModuleHandle(_T("kernel32")), "GetNativeSystemInfo");;
-    if (NULL != fnGetNativeSystemInfo)
-    {
-        fnGetNativeSystemInfo(lpSystemInfo);
-    }
-    else
-    {
-        GetSystemInfo(lpSystemInfo);
-    }
-}
-
-int GetSystemBits()
-{
-    SYSTEM_INFO si;
-    SafeGetNativeSystemInfo(&si);
-    if (si.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64 || si.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_IA64)
-    {
-        return 64;
-    }
-    return 32;
-}
-*/
-
 int getFiles()
 {
-    bool v1, v2, v3, v4, v5, v6;
+    bool v1 = false;
+    bool v2 = false;
+    bool v3 = false;
+    bool v4 = false;
+    bool v5 = false;
+    bool v6 = false;
     if (findFile(".\\QuickBackup\\config.ini"))
     {
-        rename(".\\QuickBackup\\config.ini", ".\\QuickBackup\\config.old.ini");
-        v1 = DownloadFile(L"http://download.skytown.xyz:15434/Filedir/QuickBackup/config.ini", L".\\QuickBackup\\config.ini");
+        int v7 = rename(".\\QuickBackup\\config.ini", ".\\QuickBackup\\config.old.ini");
+        if (v7 == 0)
+            v1 = DownloadFile(L"http://download.skytown.xyz:15434/Filedir/QuickBackup/config.ini", L".\\QuickBackup\\config.ini");
+        else
+            PR(2, u8"重命名文件失败"); v1 = false;
     }
     else
     {
