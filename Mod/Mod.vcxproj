@@ -195,6 +195,9 @@
   <ItemGroup>
     <None Include="json\json_valueiterator.inl" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="Update.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

@@ -1,4 +1,4 @@
-    QuickBackup更新日志
+   QuickBackup更新日志
 /---------------------------/
 v2.0.4
 现在支持BDS 1.14.60 版本了
@@ -22,15 +22,3 @@ v2.0.6 (10-24 程序员节特别版)
 现在qb_fix命令不会直接覆盖config.ini了(将原先配置改名为config.old.ini)
 新增了备份JSON记录功能
 
- at RaiseException (UnknownFile:?)
-        at CxxThrowException (UnknownFile:?)
-        at void Json::throwLogicError[class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > const &] (UnknownFile:?)
-        at class Json::Value & Json::Value::operator[][unsigned int] (UnknownFile:?)
-        at void writeBackupJson[class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> >] (UnknownFile:?)
-        at bool _TStaticHook_MSSYM_MD5_b5c9e566146b3136e6fb37f0c080d91e::_hook[unsigned __int64,class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > *] (UnknownFile:?)
-        at std::basic_istream<char,struct std::char_traits<char> >::sentry::~sentry[void] (UnknownFile:?)
-        at std::basic_istream<char,struct std::char_traits<char> >::sentry::~sentry[void] (UnknownFile:?)
-        at unsigned int std::_Pad::_Call_func[void *] (UnknownFile:?)
-        at o_exp (UnknownFile:?)
-        at BaseThreadInitThunk (UnknownFile:?)
-        at RtlUserThreadStart (UnknownFile:?)

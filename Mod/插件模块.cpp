@@ -237,15 +237,15 @@ void init()
 	// PR(0, u8"Tips:发送qb_update快速更新新版本");
 	PR(0, u8"感谢 TISUnion(https://www.github.com/TISUnion/QuickBackupM) 的灵感支持");
 	PR(0, u8"感谢 BDSJSRunner(https://mzgl.coding.net/public/BDSJSRunner/BDSJSRunner/git/files/master/BDSJSRunner) 的代码支持(部分源代码来自JSRunner)");
-	PR(0, u8"插件已启动(Version 2.0.6 #2020-10-24 Programmer's Day Special Edition#)(GitHub Repository:https://www.github.com/Jasonzyt/QuickBackup-BDS)");
+	PR(0, u8"插件已启动(Version 3.0.1 #BDXCore Edition#)(GitHub Repository:https://www.github.com/Jasonzyt/QuickBackup-BDS)");
 }
 //插件退出->预编译头.cpp
 void exit()
 {
-	PR(0, u8"插件已退出(Version 2.0.6 #2020-10-24 Programmer's Day Special Edition#)(GitHub Repository:https://www.github.com/Jasonzyt/QuickBackup-BDS)");
+	PR(0, u8"插件已退出(Version 3.0.1 #BDXCore Edition#)(GitHub Repository:https://www.github.com/Jasonzyt/QuickBackup-BDS)");
 }
 //BACKUP/FROM JSON写入
-void writeBackupJson(string path, string opfn)
+void writeJsons(string path, string opfn)
 {	
 	//Backup.json
 	Json::Value jsonroot;
@@ -301,7 +301,7 @@ void writeBackupJson(string path, string opfn)
 	form["title"] = Json::Value(u8"QuickBackup 回档GUI"); // 同上
 	// 写入表单content
 	form["content"] = Json::Value(label);
-	form["buttons"].append(time);
+	form["buttons"].append(opfn);
 
 	// 输出字符串
 	string inputformstr = w_form.write(form);
@@ -318,6 +318,7 @@ void writeBackupJson(string path, string opfn)
 	formfile << inputformstr;
 	formfile.close();
 }
+// 写入文件
 bool fix()
 {
 	if (FolderExists(L"QuickBackup") == false)
@@ -384,7 +385,7 @@ bool RunBackup()
 	if (v1)
 	{
 		PR(0, u8"Backup Successful. 备份成功");
-		writeBackupJson(bp.str(),_opfn);
+		writeJsons(bp.str(),_opfn);
 		return true;
 	}
 	else

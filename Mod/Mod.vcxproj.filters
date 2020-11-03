@@ -66,4 +66,7 @@
       <Filter>JsonCPP</Filter>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="Update.txt" />
+  </ItemGroup>
 </Project>
