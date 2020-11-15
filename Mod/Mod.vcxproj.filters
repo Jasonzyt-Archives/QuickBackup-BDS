@@ -2,6 +2,8 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClInclude Include="预编译头.h" />
+    <ClInclude Include="getConfig.h" />
+    <ClInclude Include="插件模块.h" />
     <ClInclude Include="json\allocator.h">
       <Filter>JsonCPP</Filter>
     </ClInclude>
@@ -20,6 +22,9 @@
     <ClInclude Include="json\json_features.h">
       <Filter>JsonCPP</Filter>
     </ClInclude>
+    <ClInclude Include="json\json_tool.h">
+      <Filter>JsonCPP</Filter>
+    </ClInclude>
     <ClInclude Include="json\reader.h">
       <Filter>JsonCPP</Filter>
     </ClInclude>
@@ -32,15 +37,12 @@
     <ClInclude Include="json\writer.h">
       <Filter>JsonCPP</Filter>
     </ClInclude>
-    <ClInclude Include="Function.h" />
-    <ClInclude Include="getConfig.h" />
-    <ClInclude Include="json\json_tool.h">
-      <Filter>JsonCPP</Filter>
-    </ClInclude>
+    <ClInclude Include="Functions.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="预编译头.cpp" />
     <ClCompile Include="插件模块.cpp" />
+    <ClCompile Include="getConfig.cpp" />
     <ClCompile Include="json\json_reader.cpp">
       <Filter>JsonCPP</Filter>
     </ClCompile>
@@ -50,23 +52,23 @@
     <ClCompile Include="json\json_writer.cpp">
       <Filter>JsonCPP</Filter>
     </ClCompile>
-    <ClCompile Include="Function.cpp" />
-    <ClCompile Include="getConfig.cpp" />
+    <ClCompile Include="Functions.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="chakra.lib" />
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="JsonCPP">
-      <UniqueIdentifier>{fb90ab06-3c83-4bac-aadd-5a1792b3eda1}</UniqueIdentifier>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
+    <None Include="..\README.md" />
     <None Include="json\json_valueiterator.inl">
       <Filter>JsonCPP</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Update.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="JsonCPP">
+      <UniqueIdentifier>{fd71eb23-bc91-459b-8efe-278171a793ed}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

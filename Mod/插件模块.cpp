@@ -1,28 +1,10 @@
 #include "预编译头.h"
+#include "插件模块.h"
 #pragma comment(lib,"URlmon")
 #pragma warning(disable:6031)
-#pragma warning(disable:4996)
+#pragma warning(disable:4996)    
 
 using namespace std;
-
-/*** 声明值 ***/
-string opp, opfn, _opfn, _cb, _lb;
-static VA p_spscqueue, pxuid_level;
-ofstream logfile;
-bool v8, v9, v10, v11;
-wchar_t* lv;
-wchar_t* cv;
-wchar_t* lr;
-int cb, lb;
-fstream jsonfile, formfile;
-string BACKUPJSON, FORMJSON;
-
-/*** 函数声明 ***/
-//(部分函数并未声明,这并不是一个好习惯[doge])
-bool fix();
-bool ReloadConfig();
-bool RunBackup();
-//bool Back(string filepath);
 
 /*** 定义值 ***/
 //备份TargetPath
@@ -85,7 +67,6 @@ struct Player : Actor {
 	VA getNetId() {
 		return (VA)this + 2944;		// IDA ServerPlayer::setPermissions
 	}
-
 	// 发送数据包
 	VA sendPacket(VA pkt) {
 		return SYMCALL<VA>("?sendNetworkPacket@ServerPlayer@@UEBAXAEAVPacket@@@Z", this, pkt);
@@ -103,9 +84,11 @@ static std::map<unsigned, bool> fids;
 static std::unordered_map<Player*, bool> playerSign;
 
 /*** 函  数 ***/
+
 static std::queue<std::function<void()>> todos;
 
-void safeTick(std::function<void()> F) {
+void safeTick(std::function<void()> F) 
+{
 	todos.push(F);
 }
 //执行后台指令
@@ -118,16 +101,22 @@ static bool runcmd(std::string cmd)
 //向游戏内玩家发送文本
 bool sendText(string playername, string text)
 {
+	ostringstream o;
 	if (playername == "all")
 	{
-		runcmd("tellraw @a {\"rawtext\":[{\"text\":\"" + text + "\"}]}");
+		o << u8"tellraw @a {\"rawtext\":[{\"text\":\"" << text << u8"\"}]}";
+		runcmd(o.str());
 		return true;
 	}
 	else
-		runcmd("tellraw " + playername + " {\"rawtext\":[{\"text\":\"" + text + "\"}]}");
-	return true;
+	{
+		o << u8"tellraw " << playername << " {\"rawtext\":[{\"text\":\"" << text << u8"\"}]}";
+		runcmd(o.str());
+		return true;
+	}
 }
-static unsigned getFormId() {
+static unsigned getFormId() 
+{
 	unsigned id = time(0);
 	do {
 		--id;
@@ -162,36 +151,46 @@ unsigned sendForm(std::string uuid, std::string str)
 	return fid;
 }
 // 发送指定玩家一个自定义GUI界面
-static UINT sendCustomForm(char* uuid, char* json) {
+static UINT sendCustomForm(char* uuid, char* json) 
+{
 	Player* p = onlinePlayers[uuid];
 	if (!playerSign[p])
 		return 0;
 	return sendForm(uuid, json);
 }
-// 获取JSON文件内容
-string getjson(string name)
-{
-	ifstream in;
-	in.open(name);
-	std::string content((std::istreambuf_iterator<char>(in)), (std::istreambuf_iterator<char>()));
-	in.close();
-	if (content == "") { return "{}"; }
-	Json::Reader reader;
-	Json::Value root;
-	if (reader.parse(content, root) || content == "{}")
-	{
-		return content;
-	}
-	else
-	{
-		PR(1, u8"Backup.json读取失败 这可能意味着回档功能无法使用");
-	}
-	return content;
-}
 //插件载入->预编译头.cpp
 void init()
 {
 	PR(0, u8"QuickBackup Loaded");
+	if (findFile(".\\QuickBackup\\Form.json"))
+	{
+		if (!findFile(".\\QuickBackup\\.DoNotDeleteMe"))
+		{
+			int v;
+			PR(1, u8"此次更新表单相关函数代码变动较大 请输入 114514 来同意删除Form.json重新创建");
+			cout << u8"Input \"114514\" :";
+			cin >> v;
+			if (v == 114514)
+			{
+				fstream f;
+				f.open(".\\QuickBackup\\.DoNotDeleteMe", ios::out | ios::app);
+				f.close();
+				DeleteFile(L".\\QuickBackup\\Form.json");
+			}
+			else
+			{
+				PR(0, u8"\n进程即将结束");
+				system("pause");
+				exit(1);
+			}
+		}
+	}
+	else
+	{
+		fstream f;
+		f.open(".\\QuickBackup\\.DoNotDeleteMe", ios::out | ios::app);
+		f.close();
+	}
 	if (FolderExists(L"QuickBackup"))
 	{
 		if (findFile("QuickBackup\\config.ini") == false)
@@ -232,29 +231,47 @@ void init()
 	}
 	formfile.open("QuickBackup\\Form.json", ios::out | ios::app);
 	formfile.close();
+	perfile.open("QuickBackup\\permissions.json", ios::out | ios::app);
+	perfile.close();
 	BACKUPJSON = getjson(".\\QuickBackup\\Backup.json");
 	FORMJSON = getjson(".\\QuickBackup\\From.json");
 	// PR(0, u8"Tips:发送qb_update快速更新新版本");
 	PR(0, u8"感谢 TISUnion(https://www.github.com/TISUnion/QuickBackupM) 的灵感支持");
 	PR(0, u8"感谢 BDSJSRunner(https://mzgl.coding.net/public/BDSJSRunner/BDSJSRunner/git/files/master/BDSJSRunner) 的代码支持(部分源代码来自JSRunner)");
-	PR(0, u8"插件已启动(Version 3.0.1 #BDXCore Edition#)(GitHub Repository:https://www.github.com/Jasonzyt/QuickBackup-BDS)");
+	PR(0, u8"插件已启动(Version " << QBVERSION << u8"#BETA##BDXCore Edition#)(GitHub Repository:https://www.github.com/Jasonzyt/QuickBackup-BDS)");
 }
-//插件退出->预编译头.cpp
-void exit()
+/* *********************************  Json处理写入区  *********************************** */
+// 获取JSON文件内容
+string getjson(string name)
 {
-	PR(0, u8"插件已退出(Version 3.0.1 #BDXCore Edition#)(GitHub Repository:https://www.github.com/Jasonzyt/QuickBackup-BDS)");
+	ifstream in;
+	in.open(name);
+	std::string content((std::istreambuf_iterator<char>(in)), (std::istreambuf_iterator<char>()));
+	in.close();
+	if (content == "") { return "{}"; }
+	Json::Reader reader;
+	Json::Value root;
+	if (reader.parse(content, root) || content == "{}")
+	{
+		return content;
+	}
+	else
+	{
+		PR(1, u8"Json读取失败 这可能意味着回档功能无法使用");
+	}
+	return content;
 }
-//BACKUP/FROM JSON写入
-void writeJsons(string path, string opfn)
+// BACKUP/FROM JSON写入
+void writeJsons(string path, string opfn,string Operator)
 {	
 	//Backup.json
 	Json::Value jsonroot;
 	Json::Value m;
 	Json::Value backups;
+	Json::Value o;
 	//From.json
 	Json::Value form;
 	Json::Value label;
-
 	Json::Reader reader;
 	Json::StyledWriter w_form;
 	Json::StyledWriter w_json;
@@ -262,6 +279,10 @@ void writeJsons(string path, string opfn)
 	FORMJSON = getjson(".\\QuickBackup\\From.json");
 	reader.parse(FORMJSON, form);
 	reader.parse(BACKUPJSON, jsonroot);
+	// 获取文件MD5值
+	FILE* fp = fopen(path.data(), "wb");
+	string md5 = md5file(fp);
+	fclose(fp);
 	// 获取当前系统时间
 	string time = getTime();
 	string minute = getMinute();
@@ -274,13 +295,14 @@ void writeJsons(string path, string opfn)
 	int sn = num + 1;
 	ostringstream a;a << sn;
 	string sns = a.str();
-	// 输出路径&数量&文件大小
-	cout << "[" << time << u8" INFO][QuickBackup] 此次备份存档路径:" << path << endl;
-	cout << "[" << time << u8" INFO][QuickBackup] 当前备份存档数量:" << sn << endl;
-	cout << "[" << time << u8" INFO][QuickBackup] 此次备份存档大小:" << fs << endl;
+	// 输出备份INFO
+	PR(0, u8"此次备份存档路径:" << path);
+	PR(0, u8"当前备份存档数量:" << sn);
+	PR(0, u8"此次备份存档大小:" << fs << "(" << fsb << " Byte)");
+	PR(0, u8"此次备份的执行者:" << Operator);
+	PR(0, u8"此次备份文件的MD5值:" << md5);
 	// 数量+1
 	jsonroot["Quantity"] = Json::Value(sn);
-
 	// 写入路径
 	m["PATH"] = Json::Value(path);
 	// 写入备份时间
@@ -291,18 +313,27 @@ void writeJsons(string path, string opfn)
 	m["FILESIZE"][0] = Json::Value(fsb);
 	// 写入备份文件精确大小
 	m["FILESIZE"][1] = Json::Value(fs);
+	// 写入运行者信息
+	if (Operator == "Server")
+		m["Operator"] = Json::Value("Server");
+	else
+	{
+		reader.parse(Operator, o);
+		m["Operator"] = Json::Value(o);
+	}
+	// 写入备份MD5
+	m["MD5"] = Json::Value(md5);
 	// 挂载到根节点上
 	jsonroot["Backups"].append(m);
-
 	// 写入表单基础信息
 	label["type"] = Json::Value("label");
 	label["text"] = Json::Value(u8"请选择要回的存档"); // u8必不可少 否则写入的全是乱码
 	form["type"] = Json::Value("from");
 	form["title"] = Json::Value(u8"QuickBackup 回档GUI"); // 同上
 	// 写入表单content
-	form["content"] = Json::Value(label);
+	form["content"].append(label);
+	// 写入表单buttons
 	form["buttons"].append(opfn);
-
 	// 输出字符串
 	string inputformstr = w_form.write(form);
 	string inputbackupstr = w_json.write(jsonroot);
@@ -318,7 +349,171 @@ void writeJsons(string path, string opfn)
 	formfile << inputformstr;
 	formfile.close();
 }
-// 写入文件
+string createOperatorJson(string playername, string xuid, string uuid)
+{
+	Json::Value a;
+	Json::FastWriter b;
+	a["Playername"] = Json::Value(playername);
+	a["Xuid"] = Json::Value(xuid);
+	a["Uuid"] = Json::Value(uuid);
+	return b.write(a);
+}
+// $opfn.from.json 创建&写入
+void createFromJson(size_t fsb, int sn, string opfn, string fs, string time, string minute, string path, string _operator, string md5)
+{
+	// 文件创建模块
+	fstream file;
+	ostringstream fn;
+	fn << opfn << ".form.json";
+	file.open(fn.str(), ios::out | ios::app);
+	file.close();
+	// 表单Json写入内存模块
+	Json::Value form;
+	Json::Value content;
+	Json::Value bts;
+
+	Json::Reader reader;
+	Json::StyledWriter in;
+		// 数据拼接
+		ostringstream a, b, c, d, e, f, g, h, i;
+		a << u8"QuickBackup - " << opfn;
+		b << u8"备份序号:" << sn;
+		c << u8"备份时间:" << minute;
+		d << u8"备份精确时间:" << time;
+		e << u8"备份文件大小:" << fs << "(" << fsb << " Byte)";
+		f << u8"备份输出文件名:" << opfn;
+		g << u8"备份目录:" << path;
+		h << u8"本次备份执行者:" << _operator;
+		i << u8"此次备份文件MD5值:" << md5;
+		// 写入表单基础信息
+		form["type"] = Json::Value("custom_from");
+		form["title"] = Json::Value(a.str());
+		// 写入表单label
+		label::a["type"] = Json::Value("label");
+		label::a["text"] = Json::Value(u8"备份存档详细信息");
+		label::b["type"] = Json::Value("label");
+		label::b["text"] = Json::Value(b.str());
+		label::c["type"] = Json::Value("label");
+		label::c["text"] = Json::Value(c.str());
+		label::d["type"] = Json::Value("label");
+		label::d["text"] = Json::Value(d.str());
+		label::e["type"] = Json::Value("label");
+		label::e["text"] = Json::Value(e.str());
+		label::f["type"] = Json::Value("label");
+		label::f["text"] = Json::Value(f.str());
+		label::g["type"] = Json::Value("label");
+		label::g["text"] = Json::Value(g.str());
+		label::h["type"] = Json::Value("label");
+		label::h["text"] = Json::Value(h.str());
+		label::i["type"] = Json::Value("label");
+		label::i["text"] = Json::Value(i.str());
+		// 写入表单toggle
+		toggle::a["type"] = Json::Value("toggle");
+		toggle::a["default"] = Json::Value(false);
+		toggle::a["text"] = Json::Value(u8"回档完是否自动重启");
+		// 挂载到content
+		content["content"].append(label::a);
+		content["content"].append(label::b);
+		content["content"].append(label::c);
+		content["content"].append(label::d);
+		content["content"].append(label::e);
+		content["content"].append(label::f);
+		content["content"].append(label::g);
+		content["content"].append(label::h);
+		content["content"].append(label::i);
+		content["content"].append(toggle::a);
+
+
+	form.append(content);
+}
+// 获取备份数量
+int getQuantity()
+{
+	Json::Value root;
+	Json::Reader reader;
+	BACKUPJSON = getjson(".\\QuickBackup\\Backup.json");
+	reader.parse(BACKUPJSON, root);
+	return root["Quantity"].asInt();
+}
+// BACKUP/FORM JSON删除
+void delJsons(int sn);
+// 获取所有备份
+Json::Value getAllBackups()
+{
+	Json::Value root;
+	Json::Value ret;
+	Json::Reader reader;
+	BACKUPJSON = getjson(".\\QuickBackup\\Backup.json");
+	reader.parse(BACKUPJSON, root);
+	int quantity = getQuantity();
+	for (int a = 1; a <= quantity; a++)
+	{	
+		ostringstream o;
+		string str;
+		o << a;
+		str = o.str();
+		Json::Value tmp = root["Backups"][a - 1];
+		ret[str] = Json::Value(tmp);
+	}
+	return ret;
+}
+string getListStr(Json::Value input)
+{
+	ostringstream o;
+	string a = input["TIME"].asString();
+	string b;
+	if (input["Operator"] == Json::Value("Server"))
+		b = "Server";
+	else
+		b = input["Operator"]["Playername"].asString();
+	int c = input["FILESIZE"][0].asInt();
+	string d = input["FILESIZE"][1].asString();
+	string e = input["MD5"].asString();
+	o   << u8"-备份时间:" << a 
+		<< u8"\n-文件大小:" << d << u8"(" << c << u8" Byte)" 
+		<< u8"\n-备份执行者:" << b 
+		<< u8"\n-备份文件MD5值:" << e << endl;
+	return o.str();
+}
+/* *********************************  主要功能函数  *********************************** */
+// 输出所有备份(客户端)
+void listBackupsC(string PlayerName)
+{
+	Json::Value root = getAllBackups();
+	ostringstream w;
+	string s, a, b, c, d, e;
+	int q = getQuantity();
+	w << u8"§b当前共有 " << q << u8" 个备份" << endl;
+	sendText(PlayerName,w.str());
+	for (int i = 1; i <= q; i++)
+	{
+		ostringstream oo, o; o << i;
+		string s = o.str();
+		Json::Value m = root[s];
+		string output = getListStr(m);
+		oo << u8"备份序号[" << i << "]";
+		sendText(PlayerName, oo.str());
+		sendText(PlayerName, output);
+	}
+}
+// 输出所有备份(服务端)
+void listBackupsS()
+{
+	Json::Value root = getAllBackups();
+	//Json::StyledWriter w;cout << w.write(root);
+	int q = getQuantity();
+	cout << u8"当前共有 " << q << u8" 个备份" << endl;
+	for (int i = 1; i <= q; i++)
+	{
+		ostringstream o;o << i;
+		string s = o.str();
+		Json::Value m = root[s];
+		string output = getListStr(m);
+		cout << u8"备份序号[" << i << "]\n";
+		cout << output;
+	}
+}
+// 修复
 bool fix()
 {
 	if (FolderExists(L"QuickBackup") == false)
@@ -373,7 +568,7 @@ bool ReloadConfig()
 	return true;
 }
 //运行备份
-bool RunBackup()
+bool RunBackup(string _operator)
 {
 	_opfn = editZIPFilename(opfn);
 	PR(0, u8"Starting Backup. 开始备份");
@@ -385,7 +580,7 @@ bool RunBackup()
 	if (v1)
 	{
 		PR(0, u8"Backup Successful. 备份成功");
-		writeJsons(bp.str(),_opfn);
+		writeJsons(bp.str(), _opfn, _operator);
 		return true;
 	}
 	else
@@ -394,16 +589,17 @@ bool RunBackup()
 		return false;
 	}
 }
-/*** SYMHOOK ***/
+/* *********************************  游戏SYMHOOK  *********************************** */
 //假命令注册->Line 7
 SYMHOOK(FakeCommandReg, void, "?setup@ChangeSettingCommand@@SAXAEAVCommandRegistry@@@Z", CommandRegistry* _this)
 {
-	_this->registerCommand("qb_reload", u8"重载QuickBackup插件", 0, { 0 }, { 0x40 });
+	_this->registerCommand("qb_reload", u8"重载QuickBackup插件", 0, { 0 }, { 0x40 }); 
 	_this->registerCommand("qb_backup", u8"执行一次备份", 0, { 0 }, { 0x40 });
-	_this->registerCommand("qb_auto_on", u8"开启自动备份", 0, { 0 }, { 0x40 });
-	_this->registerCommand("qb_auto_off", u8"关闭自动备份", 0, { 0 }, { 0x40 });
-	_this->registerCommand("qb_back", u8"打开回档GUI", 0, { 0 }, { 0x40 });
-	//_this->registerCommand("qb_fix", u8"检查问题并修复", 0, { 0 }, { 0x40 });
+	_this->registerCommand("qb_list", u8"列出所有备份", 0, { 0 }, { 0x40 });//
+	_this->registerCommand("qb_help", u8"显示qb命令帮助", 0, { 0 }, { 0x40 });
+	_this->registerCommand("qb_backgui", u8"打开回档GUI", 0, { 0 }, { 0x40 });//
+	_this->registerCommand("qb_gui", u8"打开插件GUI", 0, { 0 }, { 0x40 });//
+	_this->registerCommand("qb_reload", u8"重载本插件", 0, { 0 }, { 0x40 });
 	original(_this);
 }
 //GetXuid
@@ -418,7 +614,7 @@ SYMHOOK(ServerCommand, bool, "??$inner_enqueue@$0A@AEBV?$basic_string@DU?$char_t
 	logfile.open("QuickBackup\\qb.log");
 	if (cmdstr == "qb_backup")
 	{
-		bool v1 = RunBackup();
+		bool v1 = RunBackup("Server");
 		if (v1)
 		{
 			PR(0, u8"备份成功");
@@ -456,15 +652,14 @@ SYMHOOK(ServerCommand, bool, "??$inner_enqueue@$0A@AEBV?$basic_string@DU?$char_t
 		}
 		return false;
 	}
-	if (cmdstr == "qb_auto_on")
+	if (cmdstr == "qb_list")
 	{
-		//thread ab1(AutoOn);
-		//PR(0, u8"自动备份已开启");
+		listBackupsS();
 		return false;
 	}
 	if (cmdstr == "qb" || cmdstr == "qb_" || cmdstr == "qb_help" || cmdstr == "qb help" || cmdstr == "help qb")
 	{
-		cout << "QuickBackup Server Commands\nqb_backup:Run once backup (NOT AutoBackup)\nqb_reload:Reload config file\nqb_fix:Run fix function,downlaod config file and bandzip console application";
+		cout << u8"QuickBackup 服务端命令\nqb_backup:运行一次备份\nqb_reload:重载插件\nqb_fix:运行修复函数,下载Bandzip控制台程序\nqb_list:显示所有备份\nqb_back <序号>:回到<序号>这个存档";
 		return false;
 	}
 	logfile.close();
@@ -474,38 +669,51 @@ SYMHOOK(ServerCommand, bool, "??$inner_enqueue@$0A@AEBV?$basic_string@DU?$char_t
 SYMHOOK(PlayerCommand, void, "?handle@ServerNetworkHandler@@UEAAXAEBVNetworkIdentifier@@AEBVCommandRequestPacket@@@Z", VA _this, VA id, CommandRequestPacket* crp)
 {
 	Player* pPlayer = SYMCALL<Player*>("?_getServerPlayer@ServerNetworkHandler@@AEAAPEAVServerPlayer@@AEBVNetworkIdentifier@@E@Z", _this, id, *((char*)crp + 16));
-	string uid = pPlayer->getXuid(pxuid_level);
+	string xuid = pPlayer->getXuid(pxuid_level);
 	string playername = pPlayer->getNameTag();
+	string uuid = pPlayer->getUuid()->toString();
 	auto cmd = crp->toString();
 	logfile.open("QuickBackup\\qb.log");
 	if (cmd == "/qb_backup")
 	{
-		bool v1 = RunBackup();
+		string _operator = createOperatorJson(playername, xuid, uuid);
+		bool v1 = RunBackup(_operator);
 		if (v1)
 		{
-			sendText(playername, u8"[QuickBackup]备份成功");
+			sendText(playername, u8"§b[QuickBackup] §a备份成功");
 			cout << "[" << getTime() << "] " << "玩家 " << playername << " 执行了一次备份(成功) 备份文件在" << opp << _opfn << endl;
 			logfile << "[" << getTime() << "] " << "玩家 " << playername << " 执行了一次备份(成功) 备份文件在" << opp << _opfn << endl;
 		}
 		else
 		{
-			sendText(playername, u8"[QuickBackup]备份失败,请使用/qb_reload后重试");
+			sendText(playername, u8"§b[QuickBackup] §c备份失败,请使用/qb_reload后重试");
 			cout << "[" << getTime() << "] " << "玩家 " << playername << " 执行了一次备份(失败)" << endl;
 			logfile << "[" << getTime() << "] " << "玩家 " << playername << " 执行了一次备份(失败)" << endl;
 		}
+		return;
 	}
 	if (cmd == "/qb_reload")
 	{
 		bool v2 = ReloadConfig();
 		if (v2)
 		{
-			sendText(playername, u8"[QuickBackup]重载成功");
+			sendText(playername, u8"§b[QuickBackup] §a重载成功");
 			cout << "[" << getTime() << "] " << "玩家 " << playername << " 执行了一次重载(成功)" << endl;
 			logfile << "[" << getTime() << "] " << "玩家 " << playername << " 执行了一次重载(成功)" << endl;
 		}
+		return;
+	}
+	if (cmd == "qb" || cmd == "qb_" || cmd == "qb_help" || cmd == "qb help" || cmd == "help qb")
+	{
+		sendText(playername, u8"§cQuickBackup 客户端命令\n§6qb_backup:运行一次备份\n§eqb_reload:重载插件\n§aqb_list:显示所有备份\n§3qb_backgui:显示回档GUI\n§bqb_gui:显示插件GUI");
+		return;
 	}
 	logfile.close();
 	original(_this, id, crp);
+}
+SYMHOOK(GetCommandQueue, VA, "??0?$SPSCQueue@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@$0CAA@@@QEAA@_K@Z", VA _this) {
+	p_spscqueue = original(_this);
+	return p_spscqueue;
 }
 /* 取表单选择序号
 SYMHOOK(GetFormSelected, void, "?handle@?$PacketHandlerDispatcherInstance@VModalFormResponsePacket@@$0A@@@UEBAXAEBVNetworkIdentifier@@AEAVNetEventCallback@@AEAV?$shared_ptr@VPacket@@@std@@@Z", VA _this, VA id, VA handle, ModalFormResponsePacket** fp)
@@ -527,10 +735,3 @@ SYMHOOK(GetFormSelected, void, "?handle@?$PacketHandlerDispatcherInstance@VModal
 	original(_this, id, handle, fp);
 }
 */
-//SYMHOOK(结构名, int, "符号", int a/*参数列表*/) {
-// 	// 函数体
-//return original(a);
-//}
-//void init() {
-//	SYMCALL<int>("符号",0/*参数列表*/);
-//}

@@ -3,6 +3,7 @@
 // recognized in your jurisdiction.
 // See file LICENSE for detail or copy at http://jsoncpp.sourceforge.net/LICENSE
 
+#pragma once
 #ifndef JSON_READER_H_INCLUDED
 #define JSON_READER_H_INCLUDED
 

@@ -3,6 +3,7 @@
 // recognized in your jurisdiction.
 // See file LICENSE for detail or copy at http://jsoncpp.sourceforge.net/LICENSE
 
+#pragma once
 #ifndef JSON_H_INCLUDED
 #define JSON_H_INCLUDED
 
@@ -11,7 +12,7 @@
 #endif // if !defined(JSON_IS_AMALGAMATION)
 
 // Conditional NORETURN attribute on the throw functions would:
-// a) suppress false positives from static code analysis
+// a) suppress false positives from static code analysise
 // b) possibly improve optimization opportunities.
 #if !defined(JSONCPP_NORETURN)
 #if defined(_MSC_VER) && _MSC_VER == 1800

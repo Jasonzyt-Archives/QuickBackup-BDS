@@ -160,7 +160,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Function.h" />
+    <ClInclude Include="Functions.h" />
     <ClInclude Include="getConfig.h" />
     <ClInclude Include="json\allocator.h" />
     <ClInclude Include="json\assertions.h" />
@@ -173,10 +173,11 @@
     <ClInclude Include="json\value.h" />
     <ClInclude Include="json\version.h" />
     <ClInclude Include="json\writer.h" />
+    <ClInclude Include="插件模块.h" />
     <ClInclude Include="预编译头.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Function.cpp" />
+    <ClCompile Include="Functions.cpp" />
     <ClCompile Include="getConfig.cpp" />
     <ClCompile Include="json\json_reader.cpp" />
     <ClCompile Include="json\json_value.cpp" />
@@ -193,6 +194,7 @@
     <Library Include="chakra.lib" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\README.md" />
     <None Include="json\json_valueiterator.inl" />
   </ItemGroup>
   <ItemGroup>
