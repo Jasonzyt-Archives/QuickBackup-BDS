@@ -561,6 +561,8 @@ public:
   /// \post if type() was nullValue, it remains nullValue
   Members getMemberNames() const;
 
+  void isremove(ArrayIndex index);
+
   /// \deprecated Always pass len.
   JSONCPP_DEPRECATED("Use setComment(String const&) instead.")
   void setComment(const char* comment, CommentPlacement placement) {

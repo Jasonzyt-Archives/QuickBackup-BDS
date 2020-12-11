@@ -1,5 +1,5 @@
 #include "预编译头.h"
-#pragma comment(lib,"URlmon")
+#include <io.h>
 #pragma warning(disable:4996)
 
 using namespace std;
@@ -42,26 +42,26 @@ string editZIPFilename(string p5)//
 }
 
 /* *********************************  大杂烩区  *********************************** */
-string getCmdStr(string p1/*OPP*/, string p2/*TP*/, string p3/*OPF*/)//
+/*string getCmdStr(string p1, string p2, string p3)
 {
     ostringstream v2;
-    /*拼合字符串 根据需求修改此部分为7-Zip.exe或bandzip.exe
+    拼合字符串 根据需求修改此部分为7-Zip.exe或bandzip.exe
     *Bandzip
         v2 << "[Bandzip目录] c -y -r -fmt:zip \"" << p1 << p3 << "\" " << "\"" << p2 << "\" ";
     *7-Zip
         v2 << "[7-Zip目录] a \"" << p1 << p3 << "\" " << "\"" << p2 << "\" -y -r";
-    */
+    
 
-    /*The splicing string is modified to 7-Zip.exe or bandzip.exe
+    Splicing string is modified to 7-Zip.exe or bandzip.exe
     *Bandzip
         v2 << "[Bandzip Folder] c -y -r -fmt:zip \"" << p1 << p3 << "\" " << "\"" << p2 << "\" ";
     *7-Zip
         v2 << "[7-Zip Folder] a \"" << p1 << p3 << "\" " << "\"" << p2 << "\" -y -r";
-    */
+    
     v2 << "QuickBackup\\Bandzip\\bz.exe c -y -r -fmt:zip \"" << p1 << p3 << "\" " << "\"" << p2 << "\" ";
     string v3 = v2.str();
     return v3;
-}
+}*/
 
 string getConfig(string configfile, string key, string defaultvaule)
 {
@@ -70,6 +70,7 @@ string getConfig(string configfile, string key, string defaultvaule)
     return r1;
 }
 
+/* *********************************  文件(夹)处理区  *********************************** */
 bool findFile(string filename)
 {
     ifstream f(filename.c_str());
@@ -106,39 +107,50 @@ int getFiles()
 {
     bool v1 = false;
     bool v2 = false;
-    bool v3 = false;
-    bool v4 = false;
-    bool v5 = false;
-    bool v6 = false;
     if (findFile(".\\QuickBackup\\config.ini"))
     {
-        rename(".\\QuickBackup\\config.ini", ".\\QuickBackup\\config.old.ini");
+		v1 = DownloadFile(L"http://download.skytown.xyz:15434/Filedir/QuickBackup/config.ini", L".\\QuickBackup\\config.new.ini");
     }
-    v1 = DownloadFile(L"http://download.skytown.xyz:15434/Filedir/QuickBackup/config.ini", L".\\QuickBackup\\config.ini");
-    v2 = DownloadFile(L"http://download.skytown.xyz:15434/Filedir/QuickBackup/bz.exe", L".\\QuickBackup\\Bandzip\\bz.exe");
-    v3 = DownloadFile(L"http://download.skytown.xyz:15434/Filedir/QuickBackup/ark.x64.dll", L".\\QuickBackup\\Bandzip\\ark.x64.dll");
-    v4 = DownloadFile(L"http://download.skytown.xyz:15434/Filedir/QuickBackup/ark.x64.lgpl.dll", L".\\QuickBackup\\Bandzip\\ark.x64.lgpl.dll");
-    v5 = DownloadFile(L"http://download.skytown.xyz:15434/Filedir/QuickBackup/ark.x86.dll", L".\\QuickBackup\\Bandzip\\ark.x86.dll");
-    v6 = DownloadFile(L"http://download.skytown.xyz:15434/Filedir/QuickBackup/ark.x86.lgpl.dll", L".\\QuickBackup\\Bandzip\\ark.x86.lgpl.dll");
-    if (v1 && v2 && v3 && v4 && v5 && v6)
-        return 0;
-    else if (v1 == false && v2 == false && v3 == false && v4 == false && v5 == false && v6 == false)
+	else
+		v1 = DownloadFile(L"http://download.skytown.xyz:15434/Filedir/QuickBackup/config.ini", L".\\QuickBackup\\config.ini");
+    v2 = DownloadFile(L"http://download.skytown.xyz:15434/Filedir/QuickBackup/QB_EXE_lastest.exe", L".\\QuickBackup\\qb.exe");
+	if (v1 && v2)
+		return 0;
+    else if (v1 == false && v2 == false)
         return -1;
     else
         return 1;
 }
 
-size_t GetFileSizeByte(const std::string& file_name) {
-    struct _stat info;
-    _stat(file_name.c_str(), &info);
-    size_t size = info.st_size;
-    return size; //单位是：byte
+size_t GetFileSizeByte(const std::string& file_name) 
+{
+	size_t size;
+	FILE* file = fopen(file_name.c_str(), "rb");
+	if (file)
+	{
+		size_t size = filelength(fileno(file));
+		fclose(file);
+		return size;
+	}
+	else
+	{
+		return -1;
+	}
 }
 
-string GetFileSize(const std::string& file_name) {
-    struct _stat info;
-    _stat(file_name.c_str(), &info);
-    size_t size = info.st_size;
+string GetFileSize(const std::string& file_name) 
+{
+	size_t size = 0;
+	FILE* file = fopen(file_name.c_str(), "rb");
+	if (file)
+	{
+		size_t size = filelength(fileno(file));
+		fclose(file);
+	}
+	else
+	{
+		return "";
+	}
     if (size >= 1024 && size < 1048576)
     {
         ostringstream a;
@@ -164,6 +176,122 @@ string GetFileSize(const std::string& file_name) {
         return a.str();
     }
 }
+
+/********************************************************************************
+*
+*   FUNCTION NAME: GetWorldName
+*   Input        : 无
+*   Retrun Value : string				读取到的地图名称
+*
+*---------------------------------- PURPOSE -----------------------------------
+*  通过Config类读取配置文件获取地图名称
+*******************************************************************************/
+string GetWorldName()
+{
+	return getConfig("./server.properties", "level-name", "");
+}
+
+/* *********************************  字符串处理区  *********************************** */
+wchar_t* CharToWChar(const char* str)
+{
+	wchar_t* buffer = NULL;
+	if (str)
+	{
+		size_t nu = strlen(str);
+		size_t n = (size_t)MultiByteToWideChar(ZIP_UNICODE, 0, (const char*)str, int(nu), NULL, 0);
+		buffer = 0;
+		buffer = new wchar_t[n + 1];
+		MultiByteToWideChar(ZIP_UNICODE, 0, (const char*)str, int(nu), buffer, int(n));
+		buffer[n] = 0;
+	}
+	return buffer;
+}
+
+/* *********************************  ZIP处理区  *********************************** */
+//HZIP https://www.codeproject.com/Articles/7530/Zip-Utils-Clean-Elegant-Simple-Cplusplus-Win
+//ZipFunction https://github.com/DoreRandom/Zip
+//-------------------ZipFunction.h内函数用法-------------------//
+//Exp1 解压到指定目录
+////ExtractZipToDir("C:\\Users\\Administrator\\Desktop\\filename.zip", "C:\\Users\\Administrator\\Desktop\\foldername");																								//解压到当前目录
+//Exp2 解压到当前目录
+////ExtractZipToDir("C:\\Users\\Administrator\\Desktop\\filename.zip");
+//Exp3 压缩到指定目录
+////CompressDirToZip("C:\\Users\\Administrator\\Desktop\\filename.zip", "C:\\Users\\Administrator\\Desktop\\foldername");
+//Exp4 压缩到当前目录
+////CompressDirToZip("C:\\Users\\Administrator\\Desktop\\filename.zip");
+//Exp5 压缩多个目录
+////std::vector<std::string> paths;
+////paths.push_back("C:\\Users\\Administrator\\Desktop\\foldername1");
+////paths.push_back("C:\\Users\\Administrator\\Desktop\\foldername2");
+////paths.push_back("C:\\Users\\Administrator\\Desktop\\foldername3");
+////CompressDirToZip(paths, "c:\\users\\administrator\\desktop\\filename.zip");
+//Exp6 获取zip压缩过程中的错误信息并输出
+////std::cout << GetZipErrorMessage(0);
+
+void ReturnCheckOutput(int in)
+{
+	switch (in)
+	{
+	case ZR_OK:
+		PR(0, u8"压缩成功");
+		break;
+	case ZR_NOFILE:
+		PR(2, u8"找不到需要压缩的文件");
+		break;
+	case ZR_NODUPH:
+		PR(2, u8"无法复制句柄");
+		break;
+	case ZR_NOALLOC:
+		PR(2, u8"未能分配某些资源");
+		break;
+	case ZR_WRITE:
+		PR(2, u8"写入文件时出现错误");
+		break;
+	case ZR_NOTFOUND:
+		PR(2, u8"在ZIP中找不到该文件");
+		break;
+	case ZR_MORE:
+		PR(2, u8"还有更多数据要解压缩");
+		break;
+	case ZR_CORRUPT:
+		PR(2, u8"压缩文件已损坏或不是ZIP格式文件");
+		break;
+	case ZR_READ:
+		PR(2, u8"读取文件时出现常规错误");
+		break;
+	case ZR_PASSWORD:
+		PR(2, u8"没有获得正确的密码来解压缩文件");
+		break;
+	case ZR_ARGS:
+		PR(2, u8"参数错误");
+		break;
+	case ZR_NOTMMAP:
+		PR(2, u8"尝试ZipGetMemory 但这只适用于MMap ZIP文件");
+		break;
+	case ZR_MEMSIZE:
+		PR(2, u8"内存不足");
+		break;
+	case ZR_FAILED:
+		PR(2, u8"调用此函数时该操作已失败");
+		break;
+	case ZR_ENDED:
+		PR(2, u8"ZIP创建已关闭");
+		break;
+	case ZR_MISSIZE:
+		PR(2, u8"显示的输入文件大小错误");
+		break;
+	case ZR_PARTIALUNZ:
+		PR(2, u8"文件已经部分解压缩");
+		break;
+	case ZR_ZMODE:
+		PR(0, u8"尝试混合创建/打开zip");
+		break;
+	default:
+		PR(1, u8"未定义的标识符(这并不影响程序运行,但请注意)");
+		break;
+	}
+}
+
 /* *********************************  MD5处理区  *********************************** */
 #ifndef HAVE_OPENSSL
 
@@ -465,13 +593,26 @@ std::string md5sum6(std::string dat) {
 	return md5sum6(dat.c_str(), dat.length());
 }
 
-bool FileMD5Comparison(string filename, string inputMD5)
+bool CheckFileMD5(string filename, string inputMD5)
 {
-	FILE* fp = fopen(filename.data(), "wb");
+	FILE* fp = fopen(filename.c_str(), "wb");
 	string md5 = md5file(fp);
 	fclose(fp);
 	if (md5 == inputMD5)
 		return true;
 	else
 		return false;
+}
+
+string GetFileMD5(string filename)
+{
+	FILE* fp = fopen(filename.c_str(), "wb");
+	if (fp)
+	{
+		string md5 = md5file(fp);
+		fclose(fp);
+		return md5;
+	}
+	else
+		return "";
 }

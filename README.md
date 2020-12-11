@@ -1,38 +1,48 @@
 # QuickBackup-BDS
-A QuickBackup & QuickBack Plugin Of Bedrock Dedicated Server 
+一个基岩版专用服务器的快速回档和快速备份插件    
 
-#### Thanks
-+ Thanks for the inspiration support of [TISUnion](https://www.github.com/TISUnion/QuickBackupM)     
-+ Thanks for the code support of [BDS-JSRunner](https://mzgl.coding.net/public/BDSJSRunner/BDSJSRunner/git/files/master/BDSJSRunner)     
-#### Files
+#### 更新
+参见项目文件 : [Update.txt](https://github.com/Jasonzyt/QuickBackup-BDS/blob/BDXCore/Update.txt)   
+
+#### 感谢
++ 感谢 [TISUnion](https://www.github.com/TISUnion/QuickBackupM) 的灵感支持    
++ 感谢 [BDS-JSRunner](https://mzgl.coding.net/public/BDSJSRunner/BDSJSRunner/git/files/master/BDSJSRunner) 的代码支持    
++ 感谢 [HZip](https://www.codeproject.com/Articles/7530/Zip-Utils-Clean-Elegant-Simple-Cplusplus-Win) 的代码支持    
+
+#### 文件
 + QuickBackup/Backup.json     
-  Backup records json    
+  备份记录JSON文件
 + QuickBackup/config.ini    
-  Config file    
+  配置文件
 + QuickBackup/From.json    
-  Backup records json    
+  备份记录JSON文件 (表单)
 + QuickBackup/qb.log    
-  Backup log file    
-+ QuickBackup/bz/*    
-  Bandzip console applications    
-#### Plugin Commands
-##### Server Commands
-+ qb_backup   
-  Run once backup (NOT AutoBackup)
-+ qb_reload   
-  Reload config file
-+ qb_fix  
-  Run fix function:  
-  Downlaod config file and bandzip console application
-  + [config.ini](http://download.skytown.xyz:15434/Filedir/QuickBackup/config.ini)  
-  + [bz.exe](http://download.skytown.xyz:15434/Filedir/QuickBackup/bz.exe) 
-  + [ark.x64.dll](http://download.skytown.xyz:15434/Filedir/QuickBackup/ark.x64.dll) 
-  + [ark.x86.dll](http://download.skytown.xyz:15434/Filedir/QuickBackup/ark.x86.dll) 
-  + [ark.x64.lgpl.dll](http://download.skytown.xyz:15434/Filedir/QuickBackup/ark.x64.lgpl.dll) 
-  + [ark.x86.lgpl.dll](http://download.skytown.xyz:15434/Filedir/QuickBackup/ark.x86.lgpl.dll) 
+  备份记录文件
++ QuickBackup/qb.exe    
+  工具应用
 
-##### Client Commands
-+ /qb_backup  
-  Run once backup (NOT AutoBackup)
-+ /qb_reload  
-  Reload config file
+#### 插件命令
+##### 服务端命令
++ qb_backup   
+  运行一次备份 (并非自动定时备份)
++ qb_reload   
+  重新读取载入配置
++ qb_list    
+  输出所有备份清单
++ qb_help    
+  显示帮助
++ qb_fix    
+  运行修复函数:    
+  下载(更新) 配置文件和工具应用(初次使用本插件请先使用此命令下载文件)
+  + [config.ini](http://download.skytown.xyz:15434/Filedir/QuickBackup/config.ini)   
+  + [qb.exe](http://download.skytown.xyz:15434/Filedir/QuickBackup/QB_EXE_lastest.exe)   
+
+##### 客户端命令
++ qb_backup   
+  运行一次备份 (并非自动定时备份)
++ qb_reload   
+  重新读取载入配置
++ qb_list    
+  输出所有备份清单
++ qb_help    
+  显示帮助

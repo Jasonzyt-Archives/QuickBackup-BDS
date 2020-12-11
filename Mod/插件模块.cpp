@@ -1,14 +1,11 @@
 #include "预编译头.h"
 #include "插件模块.h"
-#pragma comment(lib,"URlmon")
 #pragma warning(disable:6031)
+#pragma warning(disable:6386)
+#pragma warning(disable:6201)
 #pragma warning(disable:4996)    
 
 using namespace std;
-
-/*** 定义值 ***/
-//备份TargetPath
-string tp = ".\\worlds\\";
 
 /*** 结构体 ***/
 // 取命令文本
@@ -155,7 +152,7 @@ static UINT sendCustomForm(char* uuid, char* json)
 {
 	Player* p = onlinePlayers[uuid];
 	if (!playerSign[p])
-		return 0;
+		
 	return sendForm(uuid, json);
 }
 //插件载入->预编译头.cpp
@@ -195,16 +192,8 @@ void init()
 	{
 		if (findFile("QuickBackup\\config.ini") == false)
 			PR(2, u8"缺少config.ini文件 请发送命令qb_fix来修复此错误");
-		if (findFile("QuickBackup\\Bandzip\\bz.exe") == false)
+		if (findFile("QuickBackup\\Bandzip\\qb.exe") == false)
 			PR(2, u8"缺少bz.exe文件 请发送命令qb_fix来修复此错误");
-		if (findFile("QuickBackup\\Bandzip\\ark.x64.dll") == false)
-			PR(2, u8"缺少ark.x64.dll文件 请发送命令qb_fix来修复此错误");
-		if (findFile("QuickBackup\\Bandzip\\ark.x86.dll") == false)
-			PR(2, u8"缺少ark.x86.dll文件 请发送命令qb_fix来修复此错误");
-		if (findFile("QuickBackup\\Bandzip\\ark.x64.lgpl.dll") == false)
-			PR(2, u8"缺少ark.x64.lgpl.dll文件 请发送命令qb_fix来修复此错误");
-		if (findFile("QuickBackup\\Bandzip\\ark.x86.lgpl.dll") == false)
-			PR(2, u8"缺少ark.x86.lgpl.dll文件 请发送命令qb_fix来修复此错误");
 	}
 	else
 	{
@@ -229,16 +218,33 @@ void init()
 		jsonfile << inputstr;
 		jsonfile.close();
 	}
+	if (!findFile(".\\QuickBackup\\permissions.json"))
+	{
+		Json::Value root;
+		Json::Value eg;
+		perfile.open("QuickBackup\\permissions.json", ios::out | ios::app);
+		eg["Playername"] = Json::Value("Steve");
+		eg["Xuid"] = Json::Value("1145141919810");
+		root["CanRunBackup"] = Json::Value("ALL");
+		root["CanRunBack"].append(eg);
+		//缩进写入 
+		Json::StyledWriter w_json;
+		string inputstr = w_json.write(root);
+		//输出到文件 
+		if (!perfile.is_open())
+			PR(2, u8"没有找到记录文件:\"Backup.json\".");
+		perfile << inputstr;
+		perfile.close();
+	}
 	formfile.open("QuickBackup\\Form.json", ios::out | ios::app);
 	formfile.close();
-	perfile.open("QuickBackup\\permissions.json", ios::out | ios::app);
-	perfile.close();
+	
 	BACKUPJSON = getjson(".\\QuickBackup\\Backup.json");
 	FORMJSON = getjson(".\\QuickBackup\\From.json");
 	// PR(0, u8"Tips:发送qb_update快速更新新版本");
 	PR(0, u8"感谢 TISUnion(https://www.github.com/TISUnion/QuickBackupM) 的灵感支持");
 	PR(0, u8"感谢 BDSJSRunner(https://mzgl.coding.net/public/BDSJSRunner/BDSJSRunner/git/files/master/BDSJSRunner) 的代码支持(部分源代码来自JSRunner)");
-	PR(0, u8"插件已启动(Version " << QBVERSION << u8"#BETA##BDXCore Edition#)(GitHub Repository:https://www.github.com/Jasonzyt/QuickBackup-BDS)");
+	PR(0, u8"插件已启动(Version " << QBVERSION << u8" #BETA##BDXCore Edition#)(GitHub Repository:https://www.github.com/Jasonzyt/QuickBackup-BDS)");
 }
 /* *********************************  Json处理写入区  *********************************** */
 // 获取JSON文件内容
@@ -263,7 +269,7 @@ string getjson(string name)
 }
 // BACKUP/FROM JSON写入
 void writeJsons(string path, string opfn,string Operator)
-{	
+{
 	//Backup.json
 	Json::Value jsonroot;
 	Json::Value m;
@@ -279,22 +285,40 @@ void writeJsons(string path, string opfn,string Operator)
 	FORMJSON = getjson(".\\QuickBackup\\From.json");
 	reader.parse(FORMJSON, form);
 	reader.parse(BACKUPJSON, jsonroot);
+	FILE* file = fopen(path.c_str(), "rb");
 	// 获取文件MD5值
-	FILE* fp = fopen(path.data(), "wb");
-	string md5 = md5file(fp);
-	fclose(fp);
+	string md5 = md5file(file);
 	// 获取当前系统时间
 	string time = getTime();
 	string minute = getMinute();
-	// 获取备份文件大小(Byte)
-	size_t fsb = GetFileSizeByte(path);
-	string fs = GetFileSize(path);
+	// 获取备份文件大小
+	ostringstream a;
+	int size = filelength(fileno(file));
+	if (size >= 1024 && size < 1048576)
+	{
+		a << size / 1024 << "KB";
+	}
+	else if (size >= 1048576 && size < 1073741824)
+	{
+		a << size / 1048576 << "MB";
+	}
+	else if (size >= 1073741824 && size < 1099511627776)
+	{
+		a << size / 1073741824 << "GB";
+	}
+	else
+	{
+		a << size << "Byte";
+	}
+	size_t fsb = size;
+	string fs = a.str();
+	fclose(file);
 	// 当前数量读取
 	int num = jsonroot["Quantity"].asInt();
 	// 序号=数量+1
 	int sn = num + 1;
-	ostringstream a;a << sn;
-	string sns = a.str();
+	ostringstream b;b << sn;
+	string sns = b.str();
 	// 输出备份INFO
 	PR(0, u8"此次备份存档路径:" << path);
 	PR(0, u8"当前备份存档数量:" << sn);
@@ -411,6 +435,9 @@ void createFromJson(size_t fsb, int sn, string opfn, string fs, string time, str
 		toggle::a["type"] = Json::Value("toggle");
 		toggle::a["default"] = Json::Value(false);
 		toggle::a["text"] = Json::Value(u8"回档完是否自动重启");
+		toggle::b["type"] = Json::Value("toggle");
+		toggle::b["default"] = Json::Value(true);
+		toggle::b["text"] = Json::Value(u8"是否保留当前存档(移动到./del文件夹)");
 		// 挂载到content
 		content["content"].append(label::a);
 		content["content"].append(label::b);
@@ -425,6 +452,88 @@ void createFromJson(size_t fsb, int sn, string opfn, string fs, string time, str
 
 
 	form.append(content);
+}
+// 检查Backup权限
+bool checkBackupPermission(string playername, string xuid)
+{
+	Json::Value root;
+	Json::Reader reader;
+	int num = 0;
+	string pn, xd;
+	PERJSON = getjson(".\\QuickBackup\\permissions.json");
+	reader.parse(PERJSON, root);
+	if (root["CanRunBackup"] == "ALL")
+	{
+		return true;
+	}
+	else
+	{
+		do {
+			pn = root["CanRunBackup"][num]["Playername"].asString();
+			xd = root["CanRunBackup"][num]["Xuid"].asString();
+			num++;
+			if (xd == xuid)
+			{
+				return true;
+			}
+			else if (pn != playername && xd == xuid)
+			{
+				Json::Value m;
+				Json::StyledWriter w;
+				m["Playername"] = Json::Value(playername);
+				m["Xuid"] = Json::Value(xuid);
+				root["CanRunBackup"].isremove(num);
+				root["CanRunBackup"].append(m);
+				string in = w.write(root);
+				perfile.open(".\\QuickBackup\\permissions.json", ios::out);
+				perfile << in;
+				perfile.close();
+				return true;
+			}
+		} while (pn != "");
+		return false;
+	}
+}
+// 检查Back权限
+bool checkBackPermission(string playername, string xuid)
+{
+	Json::Value root;
+	Json::Reader reader;
+	int num = 0;
+	string pn, xd;
+	PERJSON = getjson(".\\QuickBackup\\permissions.json");
+	reader.parse(PERJSON, root);
+	if (root["CanRunBack"] == "ALL")
+	{
+		return true; 
+	}
+	else
+	{
+		do {
+			pn = root["CanRunBack"][num]["Playername"].asString();
+			xd = root["CanRunBack"][num]["Xuid"].asString();
+			if (pn == playername)
+			{
+				return true;
+			}
+			else if (pn != playername && xd == xuid)
+			{
+				Json::Value m;
+				Json::StyledWriter w;
+				m["Playername"] = Json::Value(playername);
+				m["Xuid"] = Json::Value(xuid);
+				root["CanRunBack"].isremove(num);
+				root["CanRunBack"].append(m);
+				string in = w.write(root);
+				perfile.open(".\\QuickBackup\\permissions.json", ios::out);
+				perfile << in;
+				perfile.close();
+				return true;
+			}
+			num++;
+		} while (pn != "");
+		return false;
+	}
 }
 // 获取备份数量
 int getQuantity()
@@ -457,6 +566,7 @@ Json::Value getAllBackups()
 	}
 	return ret;
 }
+// for循环内使用Json::Vlaue::asString()会崩服 此函数可以解决此问题
 string getListStr(Json::Value input)
 {
 	ostringstream o;
@@ -521,10 +631,6 @@ bool fix()
 		mkdir("QuickBackup");
 		mkdir("QuickBackup\\Bandzip");
 	}
-	else if (FolderExists(L"QucikBackup\\Bandzip") == false)
-	{
-		mkdir("QuickBackup\\Bandzip");
-	}
 	if (FolderExists(L"QuickBackup") == false)
 	{
 		PR(2, u8"无法创建文件夹");
@@ -560,45 +666,72 @@ bool fix()
 	}
 }
 //配置读取
-bool ReloadConfig()
+void ReloadConfig()
 {
-	opp = getConfig("QuickBackup\\config.ini", "OutputPath", "backup\\");
-	opfn = getConfig("QuickBackup\\config.ini", "OutputFilname", "%Y-%m-%d-%H.zip");
-	BACKUPJSON = getjson(".\\QuickBackup\\Backup.json");
-	return true;
+	opp = getConfig("QuickBackup\\config.ini", "OutputPath", ".\\backup\\");
+	opfn = getConfig("QuickBackup\\config.ini", "OutputFilename", "%Y-%m-%d-%H-%M.zip");
 }
 //运行备份
 bool RunBackup(string _operator)
-{
+{	
+	
+	ostringstream p, _bp, bp, wp, cmd;
 	_opfn = editZIPFilename(opfn);
 	PR(0, u8"Starting Backup. 开始备份");
-	PR(0, u8"Starting Compress. 开始压缩");
-	system((getCmdStr(opp, tp, _opfn)).c_str());
-	ostringstream bp;
-	bp << opp << _opfn;
-	bool v1 = findFile(bp.str());
-	if (v1)
+	mkdir("./QuickBackup/tmp");
+	wp << R"(worlds\)" << GetWorldName();
+	if (opp[0] == '.')
 	{
-		PR(0, u8"Backup Successful. 备份成功");
-		writeJsons(bp.str(), _opfn, _operator);
+		if (opp[1] == '/' || opp[1] == '\\')
+		{
+			bp << "." << opp << _opfn;
+		}
+		else
+		{
+			PR(1, u8"输出文件夹格式不正确 请修改配置后发送qb_reload");
+		}
+	}
+	else
+	{
+		bp << opp << _opfn;
+	}
+	_bp << opp << _opfn;
+	cmd << "cmd /C xcopy /E /Y \"" << wp.str() << R"(" "QuickBackup\tmp\")";
+	ShellExecute(NULL, L"open", L"cmd.exe", CharToWChar(cmd.str().c_str()), NULL, SW_HIDE);
+	chdir("./QuickBackup");
+	p << "backup " << bp.str();
+	//ShellExecute(NULL, L"open", L"qb.exe", CharToWChar(p.str().c_str()), NULL, SW_SHOW);
+	HANDLE qh = ShellExecute(NULL, L"open", L"qb.exe", CharToWChar(p.str().c_str()), NULL, SW_HIDE);
+	chdir("../");
+	//WaitForSingleObject(qh, INFINITE);
+
+	//cout << "qb.exe backup \"" << bp.str() << "\"";
+	//RUNSYSTEMCMD(aaa, "powershell .\\QuickBackup\\Bandzip\\bz.exe c -y -r -fmt:zip \"" << opp << _opfn << "\" .\\QuickBackup\\tmp\\");
+	
+	bool ret = FolderExists(CharToWChar(_bp.str().c_str()));
+	if (ret)
+	{
+		PR(0, u8"备份成功");
+		writeJsons(_bp.str(), _opfn, _operator);
 		return true;
 	}
 	else
 	{
-		PR(2, u8"Backup Fail. 备份失败");
+		PR(2, u8"备份失败");
 		return false;
 	}
 }
+
 /* *********************************  游戏SYMHOOK  *********************************** */
 //假命令注册->Line 7
 SYMHOOK(FakeCommandReg, void, "?setup@ChangeSettingCommand@@SAXAEAVCommandRegistry@@@Z", CommandRegistry* _this)
 {
 	_this->registerCommand("qb_reload", u8"重载QuickBackup插件", 0, { 0 }, { 0x40 }); 
 	_this->registerCommand("qb_backup", u8"执行一次备份", 0, { 0 }, { 0x40 });
-	_this->registerCommand("qb_list", u8"列出所有备份", 0, { 0 }, { 0x40 });//
+	_this->registerCommand("qb_list", u8"列出所有备份", 0, { 0 }, { 0x40 });
 	_this->registerCommand("qb_help", u8"显示qb命令帮助", 0, { 0 }, { 0x40 });
-	_this->registerCommand("qb_backgui", u8"打开回档GUI", 0, { 0 }, { 0x40 });//
-	_this->registerCommand("qb_gui", u8"打开插件GUI", 0, { 0 }, { 0x40 });//
+	//_this->registerCommand("qb_backgui", u8"打开回档GUI", 0, { 0 }, { 0x40 });
+	//_this->registerCommand("qb_gui", u8"打开插件GUI", 0, { 0 }, { 0x40 });
 	_this->registerCommand("qb_reload", u8"重载本插件", 0, { 0 }, { 0x40 });
 	original(_this);
 }
@@ -629,12 +762,9 @@ SYMHOOK(ServerCommand, bool, "??$inner_enqueue@$0A@AEBV?$basic_string@DU?$char_t
 	}
 	if (cmdstr == "qb_reload")
 	{
-		bool v2 = ReloadConfig();
-		if (v2)
-		{
-			PR(0, u8"重载成功");
-			logfile << "[" << getTime() << "] " << " 控制台执行了一次重载(成功)" << endl;
-		}
+		ReloadConfig();
+		PR(0, u8"重载成功");
+		logfile << "[" << getTime() << "] " << " 控制台执行了一次重载(成功)" << endl;
 		return false;
 	}
 	if (cmdstr == "qb_fix")
@@ -657,6 +787,10 @@ SYMHOOK(ServerCommand, bool, "??$inner_enqueue@$0A@AEBV?$basic_string@DU?$char_t
 		listBackupsS();
 		return false;
 	}
+	if (cmdstr == "qb_test")
+	{
+		return false;
+	}
 	if (cmdstr == "qb" || cmdstr == "qb_" || cmdstr == "qb_help" || cmdstr == "qb help" || cmdstr == "help qb")
 	{
 		cout << u8"QuickBackup 服务端命令\nqb_backup:运行一次备份\nqb_reload:重载插件\nqb_fix:运行修复函数,下载Bandzip控制台程序\nqb_list:显示所有备份\nqb_back <序号>:回到<序号>这个存档";
@@ -676,31 +810,40 @@ SYMHOOK(PlayerCommand, void, "?handle@ServerNetworkHandler@@UEAAXAEBVNetworkIden
 	logfile.open("QuickBackup\\qb.log");
 	if (cmd == "/qb_backup")
 	{
-		string _operator = createOperatorJson(playername, xuid, uuid);
-		bool v1 = RunBackup(_operator);
-		if (v1)
+		if (checkBackupPermission(playername, xuid))
 		{
-			sendText(playername, u8"§b[QuickBackup] §a备份成功");
-			cout << "[" << getTime() << "] " << "玩家 " << playername << " 执行了一次备份(成功) 备份文件在" << opp << _opfn << endl;
-			logfile << "[" << getTime() << "] " << "玩家 " << playername << " 执行了一次备份(成功) 备份文件在" << opp << _opfn << endl;
+			string _operator = createOperatorJson(playername, xuid, uuid);
+			bool v1 = RunBackup(_operator);
+			if (v1)
+			{
+				sendText(playername, u8"§b[QuickBackup] §a备份成功");
+				cout << "[" << getTime() << "] " << "玩家 " << playername << " 执行了一次备份(成功) 备份文件在" << opp << _opfn << endl;
+				logfile << "[" << getTime() << "] " << "玩家 " << playername << " 执行了一次备份(成功) 备份文件在" << opp << _opfn << endl;
+			}
+			else
+			{
+				sendText(playername, u8"§b[QuickBackup] §c备份失败,请使用/qb_reload后重试");
+				cout << "[" << getTime() << "] " << "玩家 " << playername << " 执行了一次备份(失败)" << endl;
+				logfile << "[" << getTime() << "] " << "玩家 " << playername << " 执行了一次备份(失败)" << endl;
+			}
 		}
 		else
 		{
-			sendText(playername, u8"§b[QuickBackup] §c备份失败,请使用/qb_reload后重试");
-			cout << "[" << getTime() << "] " << "玩家 " << playername << " 执行了一次备份(失败)" << endl;
-			logfile << "[" << getTime() << "] " << "玩家 " << playername << " 执行了一次备份(失败)" << endl;
+			sendText(playername, u8"§b[QuickBackup] §c您没有 备份 权限!!!请联系管理员");
 		}
 		return;
 	}
 	if (cmd == "/qb_reload")
 	{
-		bool v2 = ReloadConfig();
-		if (v2)
-		{
-			sendText(playername, u8"§b[QuickBackup] §a重载成功");
-			cout << "[" << getTime() << "] " << "玩家 " << playername << " 执行了一次重载(成功)" << endl;
-			logfile << "[" << getTime() << "] " << "玩家 " << playername << " 执行了一次重载(成功)" << endl;
-		}
+		ReloadConfig();
+		sendText(playername, u8"§b[QuickBackup] §a重载成功");
+		cout << "[" << getTime() << "] " << "玩家 " << playername << " 执行了一次重载(成功)" << endl;
+		logfile << "[" << getTime() << "] " << "玩家 " << playername << " 执行了一次重载(成功)" << endl;
+		return;
+	}
+	if (cmd == "/qb_list")
+	{
+		listBackupsC(playername);
 		return;
 	}
 	if (cmd == "qb" || cmd == "qb_" || cmd == "qb_help" || cmd == "qb help" || cmd == "help qb")

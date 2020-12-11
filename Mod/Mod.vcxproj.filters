@@ -38,6 +38,15 @@
       <Filter>JsonCPP</Filter>
     </ClInclude>
     <ClInclude Include="Functions.h" />
+    <ClInclude Include="HZip\unzip.h">
+      <Filter>HZip</Filter>
+    </ClInclude>
+    <ClInclude Include="HZip\zip.h">
+      <Filter>HZip</Filter>
+    </ClInclude>
+    <ClInclude Include="HZip\ZipDefine.h">
+      <Filter>HZip</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="预编译头.cpp" />
@@ -53,22 +62,32 @@
       <Filter>JsonCPP</Filter>
     </ClCompile>
     <ClCompile Include="Functions.cpp" />
+    <ClCompile Include="HZip\unzip.cpp">
+      <Filter>HZip</Filter>
+    </ClCompile>
+    <ClCompile Include="HZip\zip.cpp">
+      <Filter>HZip</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Library Include="chakra.lib" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\README.md" />
     <None Include="json\json_valueiterator.inl">
       <Filter>JsonCPP</Filter>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="Update.txt" />
+    <None Include="..\README_EN.md" />
+    <None Include="..\README.md" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="JsonCPP">
       <UniqueIdentifier>{fd71eb23-bc91-459b-8efe-278171a793ed}</UniqueIdentifier>
     </Filter>
+    <Filter Include="HZip">
+      <UniqueIdentifier>{05abf439-a6bd-4e92-a68f-127b5d832f90}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\Update.txt" />
   </ItemGroup>
 </Project>

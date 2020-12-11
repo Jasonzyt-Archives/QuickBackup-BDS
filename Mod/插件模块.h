@@ -47,16 +47,13 @@ string opp, opfn, _opfn, _cb, _lb;
 static VA p_spscqueue, pxuid_level;
 ofstream logfile;
 bool v8, v9, v10, v11;
-wchar_t* lv;
-wchar_t* cv;
-wchar_t* lr;
 int cb, lb;
 fstream jsonfile, formfile, perfile;
-string BACKUPJSON, FORMJSON;
+string BACKUPJSON, FORMJSON, PERJSON;
 
 /*** º¯ÊýÉùÃ÷ ***/
 bool fix();
-bool ReloadConfig();
+void ReloadConfig();
 bool RunBackup(string _operator);
 void listBackupsC(string PlayerName);
 void listBackupsS();
@@ -72,6 +69,8 @@ string getjson(string name);
 void writeJsons(string path, string opfn, string Operator);
 void createFromJson(size_t fsb, int sn, string opfn, string fs, string time, string minute, string path, string _operator, string md5);
 string createOperatorJson(string playername, string xuid, string uuid);
+bool checkBackupPermission(string playername, string xuid);
+bool checkBackPermission(string playername, string xuid);
 int getQuantity();
 Json::Value getAllBackups();
 string getListStr(Json::Value input);

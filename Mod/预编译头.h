@@ -1,30 +1,43 @@
 #pragma once
 #define WIN32_LEAN_AND_MEAN
+#define PCH_INCLUDED
 // 当前版本
-#define QBVERSION "3.1.0"
+#define QBVERSION "3.1.6"
 // Windows 头文件
 #include <windows.h>
-// C++标准库 头文件
+// C++ 标准库 & 头文件
 #include <iostream>
 #include <string>
 #include <unordered_map>
 #include <functional>
 #include <queue>
 #include <chrono>
+#include <io.h>
+#include <assert.h>
 #include <map>
 #include <set>
 #include <utility>
-#include <urlmon.h>
-#include <tchar.h>
 #include <direct.h>
 #include <thread>
 #include <sys/stat.h>
 #include <tchar.h>
+#include <cstdio>
+#include <stdio.h>
+#include <stdlib.h>
 #include <wincrypt.h>
-#include <cstring>
+#include <shellapi.h>
+// 其他 头文件
+// URLmon 库
+#include <urlmon.h>
+#pragma comment(lib,"URLmon")
 // 项目 头文件
 #include "Functions.h"
 #include "getConfig.h"
+#include "插件模块.h"
+// HZip 库 头文件
+#include "HZip/zip.h"
+#include "HZip/unzip.h"
+#include "HZip/ZipDefine.h"
 // JsonCPP 库 头文件
 #include "json/forwards.h"
 #include "json/writer.h"
@@ -32,9 +45,9 @@
 #include "json/json.h"
 #include "json/reader.h"
 
-
 using VA = unsigned __int64;
 using RVA = unsigned int;
+using String = std::string;
 template<typename Type>
 using Ptr = Type*;
 
@@ -56,6 +69,7 @@ struct HookRegister {
 		if (HookFunction(found, org, hook)!= 0) printf("FailedToHook: %s\n", sym);
 	}
 };
+/* *********************************  定义宏区  *********************************** */
 #define SYMHOOK(name,ret,sym,...)				\
 struct name {									\
 	typedef ret(*original_type)(__VA_ARGS__);	\
@@ -72,6 +86,10 @@ struct name {									\
 HookRegister name{sym,&name::_hook,(void**)&name::_original()};\
 ret name::_hook(__VA_ARGS__)
 
+#define SHOWPWD ::system("powershell pwd")
+
+#define _U(x) u8 ## x
+
 // PR(0, u8"标准流输出"<<u8"!!!")
 #define PR(type, ...)\
 	if (type == 0)\
@@ -85,6 +103,20 @@ ret name::_hook(__VA_ARGS__)
 	else\
 		std::cout << __VA_ARGS__ << endl
 
-//#define CS(...) std::ostringstream v;v << __VA_ARGS__;std::string ret = v.str();(ret)
-// 获取文件MD5值
-//#define GETFILEMD5(filename,buffer) TCHAR fstr[MAX_PATH] = _T(filename);GetFileMd5(fstr, buffer);
+// 向游戏内玩家发送消息
+#define SENDTEXT(name,playername,...)\
+	ostringstream name;\
+	name << __VA_ARGS__;\
+	sendText(playername,name.str());
+
+// 运行游戏后台命令
+#define RUNCMD(name,...)\
+	ostringstream name;\
+	name << __VA_ARGS__;\
+	runcmd(name.str());
+
+// 运行系统命令
+#define RUNSYSTEMCMD(name,...)\
+	ostringstream name;\
+	name << __VA_ARGS__;\
+	system(name.str().data());

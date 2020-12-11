@@ -1,0 +1,64 @@
+    QuickBackup更新日志
+    Written By JasonZYT
+/---------------------------/
+v2.0.4
+现在支持BDS 1.14.60 版本了
+新增qb_fix功能自动修复错误
+
+v2.0.5
+修复了download.skytown.xyz域名解析问题
+修复了部分问题
+
+v2.0.5 (Fix 1)
+现在支持BDS 1.16.x 版本了
+
+v2.0.5 (Fix 2)
+修复了无法备份的问题
+修复了下载源 文件不完整的问题
+
+v2.0.6 (10-24 程序员节特别版)
+修复了亿些BUG
+现在qb_fix命令不会直接覆盖config.ini了(将原先配置改名为config.old.ini)
+新增了备份JSON记录功能
+
+v3.0.0 
+支持BDXCore加载器
+优化了记录文件
+修复了崩服bug
+Form.json为下一版本的表单做铺垫
+
+v3.0.1
+修复无法下载文件的问题 -> Function.cpp FUNC int getFiles()
+
+v3.1.0
+新增./QuickBackup/Form/*.form.json文件
+新增/qb_list(服务端qb_list)命令 用于显示所有备份
+新增获取备份文件MD5值的功能
+修复客户端无此命令的问题 -> 插件模块.cpp SYMHOOK void PlayerCommand (由Minebbs用户"Jemo Li"反馈)
+标准流输出信息现在使用宏而不是函数了
+*写入Json函数大改 建议在启动前删除原有的Json文件 
+
+v3.1.1
+新增权限系统 可在./QuickBackup/permissions.json内修改持有权限的人 (给出了一个例子,Xuid是必须填写的)
+新增./QuickBackup/permissions.json文件
+
+v3.1.2
+更新了Bandzip源 目前支持bz.exe v7.12.0.1
+
+v3.1.3
+改用了Zlib作为压缩工具库
+
+v3.1.4
+改用了Zipper作为压缩工具库
+
+v3.1.5
+改用了HZIP作为压缩工具库
+解决了Bandzip无法正常压缩的问题
+新增依赖程序 qb.exe(项目QB_EXE) 可以在MineBBS或GitHub下载
+*备份函数大改 注释极其杂乱 可读性差 待下次更新整理整理
+
+v3.1.6
+修复了无法读取写入JSON文件的严重bug -> json/* (误将替换"return 0"设为整个解决方案)
+修复了无法获取文件MD5&大小的玄学bug -> 插件模块.cpp FUNC void writeJsons
+修改getFiles函数 不再使用Bandzip作为压缩软件 -> F unctions.cpp FUNC int getFiles
+修改下载源 移除了Bandzip软件 新增http://download.skytown.xyz:15434/Filedir/QuickBackup/QB_EXE_lastest.exe

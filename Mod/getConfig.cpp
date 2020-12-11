@@ -10,8 +10,8 @@ Config::Config(string filename, string delimiter,string comment)
     std::ifstream in(filename.c_str());
 
     if (!in) { 
-        //throw File_not_found(filename);
-        PR(2,u8"Can't Find Config File\"config.ini\" 找不到文件\"config.ini\"");
+        throw File_not_found(filename);
+        //cout << u8"Can't Find Config File 找不到文件";
     }
 
     in >> (*this);
@@ -173,6 +173,6 @@ int main()
     std::cout<<"username:"<<username<<std::endl;  
     std::cout<<"password:"<<password<<std::endl;  
       
-    return 0;  
+      
 }  
 */
