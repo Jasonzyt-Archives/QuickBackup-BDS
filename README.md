@@ -1,48 +1,49 @@
 # QuickBackup-BDS
-Ò»¸ö»ùÑÒ°æ×¨ÓÃ·şÎñÆ÷µÄ¿ìËÙ»ØµµºÍ¿ìËÙ±¸·İ²å¼ş    
+ä¸€ä¸ªåŸºå²©ç‰ˆä¸“ç”¨æœåŠ¡å™¨çš„å¿«é€Ÿå›æ¡£å’Œå¿«é€Ÿå¤‡ä»½æ’ä»¶    
+æœ¬æ’ä»¶ç°å·²åœæ­¢æ”¯æŒ,è¯·ç§»æ­¥[QuickBackupX](https://github.com/ST-SKYTown/QuickBackupX)
 
-#### ¸üĞÂ
-²Î¼ûÏîÄ¿ÎÄ¼ş : [Update.txt](https://github.com/Jasonzyt/QuickBackup-BDS/blob/BDXCore/Update.txt)   
+#### æ›´æ–°
+å‚è§é¡¹ç›®æ–‡ä»¶ : [Update.txt](https://github.com/Jasonzyt/QuickBackup-BDS/blob/BDXCore/Update.txt)   
 
-#### ¸ĞĞ»
-+ ¸ĞĞ» [TISUnion](https://www.github.com/TISUnion/QuickBackupM) µÄÁé¸ĞÖ§³Ö    
-+ ¸ĞĞ» [BDS-JSRunner](https://mzgl.coding.net/public/BDSJSRunner/BDSJSRunner/git/files/master/BDSJSRunner) µÄ´úÂëÖ§³Ö    
-+ ¸ĞĞ» [HZip](https://www.codeproject.com/Articles/7530/Zip-Utils-Clean-Elegant-Simple-Cplusplus-Win) µÄ´úÂëÖ§³Ö    
+#### æ„Ÿè°¢
++ æ„Ÿè°¢ [TISUnion](https://www.github.com/TISUnion/QuickBackupM) çš„çµæ„Ÿæ”¯æŒ    
++ æ„Ÿè°¢ [BDS-JSRunner](https://mzgl.coding.net/public/BDSJSRunner/BDSJSRunner/git/files/master/BDSJSRunner) çš„ä»£ç æ”¯æŒ    
++ æ„Ÿè°¢ [HZip](https://www.codeproject.com/Articles/7530/Zip-Utils-Clean-Elegant-Simple-Cplusplus-Win) çš„ä»£ç æ”¯æŒ    
 
-#### ÎÄ¼ş
+#### æ–‡ä»¶
 + QuickBackup/Backup.json     
-  ±¸·İ¼ÇÂ¼JSONÎÄ¼ş
+  å¤‡ä»½è®°å½•JSONæ–‡ä»¶
 + QuickBackup/config.ini    
-  ÅäÖÃÎÄ¼ş
+  é…ç½®æ–‡ä»¶
 + QuickBackup/From.json    
-  ±¸·İ¼ÇÂ¼JSONÎÄ¼ş (±íµ¥)
+  å¤‡ä»½è®°å½•JSONæ–‡ä»¶ (è¡¨å•)
 + QuickBackup/qb.log    
-  ±¸·İ¼ÇÂ¼ÎÄ¼ş
+  å¤‡ä»½è®°å½•æ–‡ä»¶
 + QuickBackup/qb.exe    
-  ¹¤¾ßÓ¦ÓÃ
+  å·¥å…·åº”ç”¨
 
-#### ²å¼şÃüÁî
-##### ·şÎñ¶ËÃüÁî
+#### æ’ä»¶å‘½ä»¤
+##### æœåŠ¡ç«¯å‘½ä»¤
 + qb_backup   
-  ÔËĞĞÒ»´Î±¸·İ (²¢·Ç×Ô¶¯¶¨Ê±±¸·İ)
+  è¿è¡Œä¸€æ¬¡å¤‡ä»½ (å¹¶éè‡ªåŠ¨å®šæ—¶å¤‡ä»½)
 + qb_reload   
-  ÖØĞÂ¶ÁÈ¡ÔØÈëÅäÖÃ
+  é‡æ–°è¯»å–è½½å…¥é…ç½®
 + qb_list    
-  Êä³öËùÓĞ±¸·İÇåµ¥
+  è¾“å‡ºæ‰€æœ‰å¤‡ä»½æ¸…å•
 + qb_help    
-  ÏÔÊ¾°ïÖú
+  æ˜¾ç¤ºå¸®åŠ©
 + qb_fix    
-  ÔËĞĞĞŞ¸´º¯Êı:    
-  ÏÂÔØ(¸üĞÂ) ÅäÖÃÎÄ¼şºÍ¹¤¾ßÓ¦ÓÃ(³õ´ÎÊ¹ÓÃ±¾²å¼şÇëÏÈÊ¹ÓÃ´ËÃüÁîÏÂÔØÎÄ¼ş)
+  è¿è¡Œä¿®å¤å‡½æ•°:    
+  ä¸‹è½½(æ›´æ–°) é…ç½®æ–‡ä»¶å’Œå·¥å…·åº”ç”¨(åˆæ¬¡ä½¿ç”¨æœ¬æ’ä»¶è¯·å…ˆä½¿ç”¨æ­¤å‘½ä»¤ä¸‹è½½æ–‡ä»¶)
   + [config.ini](http://download.skytown.xyz:15434/Filedir/QuickBackup/config.ini)   
   + [qb.exe](http://download.skytown.xyz:15434/Filedir/QuickBackup/QB_EXE_lastest.exe)   
 
-##### ¿Í»§¶ËÃüÁî
+##### å®¢æˆ·ç«¯å‘½ä»¤
 + qb_backup   
-  ÔËĞĞÒ»´Î±¸·İ (²¢·Ç×Ô¶¯¶¨Ê±±¸·İ)
+  è¿è¡Œä¸€æ¬¡å¤‡ä»½ (å¹¶éè‡ªåŠ¨å®šæ—¶å¤‡ä»½)
 + qb_reload   
-  ÖØĞÂ¶ÁÈ¡ÔØÈëÅäÖÃ
+  é‡æ–°è¯»å–è½½å…¥é…ç½®
 + qb_list    
-  Êä³öËùÓĞ±¸·İÇåµ¥
+  è¾“å‡ºæ‰€æœ‰å¤‡ä»½æ¸…å•
 + qb_help    
-  ÏÔÊ¾°ïÖú
+  æ˜¾ç¤ºå¸®åŠ©
