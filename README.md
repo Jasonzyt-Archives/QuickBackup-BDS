@@ -1,6 +1,5 @@
-# QuickBackup-BDS
-一个基岩版专用服务器的快速回档和快速备份插件    
-本插件现已停止支持,请移步[QuickBackupX](https://github.com/ST-SKYTown/QuickBackupX)
+# QuickBackup-BDS   
+# 本插件现已停止支持,请移步[QuickBackupX](https://github.com/Jasonzyt/QuickBackupX)
 
 #### 更新
 参见项目文件 : [Update.txt](https://github.com/Jasonzyt/QuickBackup-BDS/blob/BDXCore/Update.txt)   
